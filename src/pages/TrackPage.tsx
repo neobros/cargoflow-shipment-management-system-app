@@ -37,7 +37,7 @@ export function TrackPage() {
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="CF-8817-001 or BK-26-8817"
+          placeholder="CF-0042-001 or BK-26-0042"
           aria-label="Tracking number or booking reference"
           className="tnum h-16 flex-grow rounded-[16px] bg-panel-2 px-[22px] text-[17px] text-ink"
         />
@@ -50,8 +50,9 @@ export function TrackPage() {
       </form>
 
       {!query && (
-        <p className="mt-6 text-[15px] text-ink-4">
-          Try <span className="tnum font-semibold text-ink-2">BK-26-8817</span> to see a real shipment.
+        <p className="mt-6 text-[15px] leading-[1.6] text-ink-4">
+          Use the booking reference from your confirmation, or the tracking number printed on any one
+          box. Either finds the shipment.
         </p>
       )}
 

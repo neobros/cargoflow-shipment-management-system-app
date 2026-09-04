@@ -131,7 +131,7 @@ export function HomePage() {
         <form action="/track" className="flex flex-col gap-3 sm:flex-row">
           <input
             name="id"
-            placeholder="CF-8817-001"
+            placeholder="CF-0042-001"
             aria-label="Tracking number"
             className="tnum h-14 w-full min-w-0 rounded-[16px] bg-panel px-5 text-[16px] text-ink sm:h-16 sm:flex-grow sm:px-[22px] sm:text-[17px]"
           />

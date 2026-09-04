@@ -57,8 +57,7 @@ export function BookingsPage() {
 
             {bookings.length === 0 ? (
               <div className="px-5 py-12 text-center text-[15px] text-ink-3">
-                No bookings yet. The wizard that creates them is the next thing to build; until then the
-                seeded shipment is the only one here.
+                No bookings yet. One appears here as soon as a customer completes the booking wizard.
               </div>
             ) : (
               bookings.map((booking) => (

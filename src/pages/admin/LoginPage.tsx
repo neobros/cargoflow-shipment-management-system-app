@@ -52,9 +52,10 @@ export function LoginPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-3 text-[13px] text-ink-4">
-            Password <span className="tnum font-semibold text-ink-2">cargoflow</span> for all four. Sign in as
-            the operator to watch the server refuse an approval.
+          <p className="mt-3 text-[13px] leading-[1.6] text-ink-4">
+            Password <span className="tnum font-semibold text-ink-2">cargoflow</span> for all four. They
+            exist so the separation of duties can be walked: an operator can receive and measure boxes
+            but the server refuses their approval, not merely the button.
           </p>
         </div>
       </div>
