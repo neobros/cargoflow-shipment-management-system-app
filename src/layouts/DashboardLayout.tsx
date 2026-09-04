@@ -11,7 +11,14 @@ const NAV = [
     items: [
       { label: 'Overview', to: '/admin', permission: 'admin:access', built: true, end: true },
       { label: 'Bookings', to: '/admin/bookings', permission: 'bookings:read', built: true, end: false },
-      { label: 'Depot floor', to: '/depot', permission: 'depot:receive', built: true, end: false },
+      {
+        label: 'Depot floor',
+        to: '/depot',
+        permission: 'depot:receive',
+        built: true,
+        end: false,
+        newTab: true,
+      },
       { label: 'Containers', to: '/admin/containers', permission: 'containers:read', built: true, end: false },
     ],
   },
@@ -116,14 +123,46 @@ export function DashboardLayout() {
                   ? location.pathname === item.to
                   : location.pathname.startsWith(item.to);
 
+                const className = `mb-[3px] flex h-[42px] items-center gap-3 rounded-[10px] px-3 text-sm ${
+                  active ? 'bg-brand-tint font-bold text-brand' : 'font-medium text-ink-2'
+                }`;
+
+                if (item.built && 'newTab' in item && item.newTab) {
+                  // A plain anchor, not a Link: this leaves the admin router
+                  // altogether. The icon is there so the new tab is expected
+                  // rather than a surprise.
+                  return (
+                    <a
+                      key={item.to}
+                      href={item.to}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={className}
+                    >
+                      {item.label}
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 14 14"
+                        fill="none"
+                        aria-hidden="true"
+                        className="ml-auto shrink-0 opacity-55"
+                      >
+                        <path
+                          d="M5.5 2.5H2.5v9h9v-3M8.5 2.5h3v3M11.5 2.5 6.5 7.5"
+                          stroke="currentColor"
+                          strokeWidth="1.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <span className="sr-only">(opens in a new tab)</span>
+                    </a>
+                  );
+                }
+
                 return item.built ? (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className={`mb-[3px] flex h-[42px] items-center gap-3 rounded-[10px] px-3 text-sm ${
-                      active ? 'bg-brand-tint font-bold text-brand' : 'font-medium text-ink-2'
-                    }`}
-                  >
+                  <Link key={item.to} to={item.to} className={className}>
                     {item.label}
                   </Link>
                 ) : (

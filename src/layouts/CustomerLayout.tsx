@@ -99,9 +99,17 @@ export function CustomerLayout() {
               <Link to="/admin" className="text-[15px] text-ink-3">
                 Admin panel
               </Link>
-              <Link to="/depot" className="text-[15px] text-ink-3">
+              {/* Leaves the customer site for a different surface entirely, so
+                  it takes a tab of its own rather than replacing the page. */}
+              <a
+                href="/depot"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[15px] text-ink-3"
+              >
                 Depot floor
-              </Link>
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
             </div>
           </div>
         </div>
