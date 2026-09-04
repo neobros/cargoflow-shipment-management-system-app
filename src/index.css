@@ -1,0 +1,299 @@
+@import 'tailwindcss';
+
+/*
+ * Three surfaces, one system.
+ *
+ * A grandmother sending boxes, a depot worker in gloves and a billing clerk are
+ * not the same person and do not get the same interface. Each route group sets
+ * data-surface on its wrapper; every token below is redefined per surface, so
+ * the same utility class renders correctly in all three without a single
+ * conditional in a component.
+ */
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-4: var(--ink-4);
+  --color-ink-invert: var(--ink-invert);
+
+  --color-rule: var(--rule);
+  --color-rule-2: var(--rule-2);
+
+  --color-brand: var(--brand);
+  --color-brand-deep: var(--brand-deep);
+  --color-brand-tint: var(--brand-tint);
+  --color-brand-soft: var(--brand-soft);
+
+  --color-alert: var(--alert);
+  --color-alert-tint: var(--alert-tint);
+  --color-alert-ink: var(--alert-ink);
+
+  --color-ok: var(--ok);
+  --color-ok-tint: var(--ok-tint);
+  --color-ok-ink: var(--ok-ink);
+
+  --color-warn: var(--warn);
+  --color-warn-tint: var(--warn-tint);
+  --color-warn-ink: var(--warn-ink);
+
+  --color-accent: var(--accent);
+  --color-accent-tint: var(--accent-tint);
+
+  --color-deep: var(--deep);
+
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/* ── Surface 01 · Customer ────────────────────────────────────────────────
+   Bright, warm, written for someone who has never shipped freight. Colour
+   does the explaining, because this person will not read a legend. */
+[data-surface='customer'] {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel-2: #f4f7f6;
+
+  --ink: #0b1f1d;
+  --ink-2: #3f5451;
+  --ink-3: #6b8481;
+  --ink-4: #9bafac;
+  --ink-invert: #ffffff;
+
+  --rule: #e2eae8;
+  --rule-2: #eff4f3;
+
+  --brand: #0f766e;
+  --brand-deep: #0b5e57;
+  --brand-tint: #e6f2f0;
+  --brand-soft: #cfe6e3;
+
+  --alert: #ef6351;
+  --alert-tint: #fdece9;
+  --alert-ink: #8a3226;
+
+  --ok: #0e9f6e;
+  --ok-tint: #e3f5ee;
+  --ok-ink: #0a6b4a;
+
+  --warn: #b4790a;
+  --warn-tint: #fef3dc;
+  --warn-ink: #7a5308;
+
+  --accent: #8b5cf6;
+  --accent-tint: #f1ebfe;
+
+  --deep: #0b2f2b;
+
+  --radius-card: 20px;
+  --radius-control: 14px;
+  --control-height: 52px;
+}
+
+/* ── Surface 02 · Admin ───────────────────────────────────────────────────
+   Open all day by someone who lives in it and needs density, not delight. */
+[data-surface='admin'] {
+  --bg: #f7f8fa;
+  --panel: #ffffff;
+  --panel-2: #f1f3f7;
+
+  --ink: #0f172a;
+  --ink-2: #334155;
+  --ink-3: #64748b;
+  --ink-4: #94a3b8;
+  --ink-invert: #ffffff;
+
+  --rule: #e2e8f0;
+  --rule-2: #eef2f6;
+
+  --brand: #4f46e5;
+  --brand-deep: #4338ca;
+  --brand-tint: #eef0fe;
+  --brand-soft: #e0e3fd;
+
+  --alert: #dc2626;
+  --alert-tint: #fdecec;
+  --alert-ink: #b91c1c;
+
+  --ok: #059669;
+  --ok-tint: #e6f6f0;
+  --ok-ink: #047857;
+
+  --warn: #d97706;
+  --warn-tint: #fef3e2;
+  --warn-ink: #b45309;
+
+  --accent: #0284c7;
+  --accent-tint: #e4f2fb;
+
+  --deep: #0f172a;
+
+  --radius-card: 14px;
+  --radius-control: 10px;
+  --control-height: 40px;
+}
+
+/* The same markup on a second set of tokens — depot offices are dim and
+   billing shifts run late. Not a redesign, a theme. */
+[data-surface='admin'][data-theme='dark'] {
+  --bg: #0b0f19;
+  --panel: #131926;
+  --panel-2: #1b2333;
+
+  --ink: #e8ecf4;
+  --ink-2: #aab4c7;
+  --ink-3: #7c8aa3;
+  --ink-4: #5a6880;
+
+  --rule: #242d3d;
+  --rule-2: #1b2333;
+
+  --brand: #6366f1;
+  --brand-deep: #818cf8;
+  --brand-tint: #1e2140;
+  --brand-soft: #2a2f57;
+
+  --alert: #f87171;
+  --alert-tint: #2e1414;
+  --alert-ink: #fca5a5;
+
+  --ok: #34d399;
+  --ok-tint: #12291f;
+  --ok-ink: #6ee7b7;
+
+  --warn: #fbbf24;
+  --warn-tint: #2b2110;
+  --warn-ink: #fcd34d;
+
+  --accent: #38bdf8;
+  --accent-tint: #0e2433;
+
+  --deep: #060910;
+}
+
+/* ── Surface 03 · Depot floor ─────────────────────────────────────────────
+   A hundred times a shift, in gloves, under bad light, on a cheap handheld.
+   Square corners and no shadows to lose in glare. Deliberately austere. */
+[data-surface='depot'] {
+  --bg: #f5f1e8;
+  --panel: #fffdf8;
+  --panel-2: #efe9dc;
+
+  --ink: #17150f;
+  --ink-2: #3d382d;
+  --ink-3: #6e6656;
+  --ink-4: #8e8370;
+  --ink-invert: #f5f1e8;
+
+  --rule: #ded7c7;
+  --rule-2: #ede8dc;
+
+  --brand: #e0921b;
+  --brand-deep: #b87113;
+  --brand-tint: #fbeed6;
+  --brand-soft: #f3dfb4;
+
+  --alert: #b4402a;
+  --alert-tint: #f6e2dc;
+  --alert-ink: #8c3521;
+
+  --ok: #4e7b45;
+  --ok-tint: #e4ede0;
+  --ok-ink: #3b6033;
+
+  --warn: #e0921b;
+  --warn-tint: #fbeed6;
+  --warn-ink: #8a5a0e;
+
+  --accent: #2c6e8a;
+  --accent-tint: #deeaef;
+
+  --deep: #17150f;
+
+  --radius-card: 2px;
+  --radius-control: 2px;
+  --control-height: 52px;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+
+/*
+ * These MUST live in @layer base.
+ *
+ * Unlayered CSS beats anything inside a layer, whatever the specificity — so an
+ * unlayered `a { color: ... }` silently overrides every text-colour utility on
+ * every link in the app, and a brand-coloured button ends up with brand-coloured
+ * text on it. Layering puts these back underneath the utilities where they
+ * belong.
+ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* A default for links that carry no colour utility of their own. */
+  a {
+    color: var(--brand);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--brand-deep);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  input::placeholder {
+    color: var(--ink-4);
+  }
+}
+
+/*
+ * Numbers a person might read down a phone line, compare in a column or dispute
+ * are always monospace and always tabular. Deliberately unlayered so it wins
+ * over any font utility that lands on the same element.
+ */
+.tnum {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

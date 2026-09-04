@@ -1,12 +1,11 @@
 node_modules/
+dist/
+
+# Left over from the Next.js era; keep ignored so a stray build never lands.
 .next/
 .next-build/
-out/
-build/
 .env.local
 .env*.local
 *.log
 .DS_Store
-next-env.d.ts
-.vercel
 *.tsbuildinfo
