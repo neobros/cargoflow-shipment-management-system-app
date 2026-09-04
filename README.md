@@ -111,3 +111,16 @@ tracking timeline with the re-rate approval, then the depot verification bench
 against `/v1/quotes/compare` — which is already built and tested on the backend.
 
 The full UI/UX design these screens are built from lives in `../design`.
+
+---
+
+## A note on `npm run build` while `npm run dev` is running
+
+`next build` and `next dev` share `.next` by default, so building while the dev
+server is up replaces the chunks it is serving and the page loses its
+stylesheet with a 404 on `/_next/static/css/app/layout.css`.
+
+`npm run build` therefore writes to `.next-build` instead (see
+`scripts/build.mjs` and `distDir` in `next.config.ts`), so the two can run side
+by side. If you ever do see that 404, stop the dev server, delete `.next`, and
+start it again.

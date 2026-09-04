@@ -2,13 +2,13 @@
   "name": "cargoflow-app",
   "version": "0.1.0",
   "private": true,
-  "description": "CargoFlow — customer booking portal, depot floor tools and admin panel",
+  "description": "CargoFlow \u2014 customer booking portal, depot floor tools and admin panel",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/build.mjs",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
