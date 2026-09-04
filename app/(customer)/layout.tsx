@@ -22,17 +22,12 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
           </nav>
         </div>
 
-        <div className="flex items-center gap-6">
-          <Link href="/sign-in" className="hidden text-[15px] font-semibold text-ink sm:block">
-            Sign in
-          </Link>
-          <Link
-            href="/book"
-            className="inline-flex h-12 items-center rounded-full bg-brand px-6 text-[15px] font-bold text-ink-invert"
-          >
-            Get a price
-          </Link>
-        </div>
+        <Link
+          href="/#quote"
+          className="inline-flex h-12 items-center rounded-full bg-brand px-6 text-[15px] font-bold text-ink-invert"
+        >
+          Get a price
+        </Link>
       </header>
 
       <main>{children}</main>
@@ -47,33 +42,38 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
               Delivery hub · Unit 7, 41 Fitzgerald Road, Laverton North VIC 3026, Australia
             </p>
           </div>
+
           <div className="flex gap-16">
             <div className="flex flex-col gap-[14px]">
               <span className="text-sm font-bold">Ship</span>
-              <Link href="/book" className="text-[15px] text-ink-3">
+              <Link href="/#quote" className="text-[15px] text-ink-3">
                 Get a price
               </Link>
-              <Link href="/prohibited" className="text-[15px] text-ink-3">
-                What you can send
-              </Link>
-              <Link href="/packing" className="text-[15px] text-ink-3">
-                How to pack
-              </Link>
-            </div>
-            <div className="flex flex-col gap-[14px]">
-              <span className="text-sm font-bold">Help</span>
               <Link href="/track" className="text-[15px] text-ink-3">
                 Track a box
               </Link>
-              <Link href="/schedule" className="text-[15px] text-ink-3">
-                Sailing dates
+              <Link href="/#prices" className="text-[15px] text-ink-3">
+                What it costs
               </Link>
-              <Link href="/contact" className="text-[15px] text-ink-3">
-                Talk to us
+            </div>
+
+            {/* Staff surfaces, linked so the other two designs are findable. */}
+            <div className="flex flex-col gap-[14px]">
+              <span className="text-sm font-bold">For staff</span>
+              <Link href="/admin" className="text-[15px] text-ink-3">
+                Admin panel
+              </Link>
+              <Link href="/depot" className="text-[15px] text-ink-3">
+                Depot floor
               </Link>
             </div>
           </div>
         </div>
+
+        <p className="mt-10 border-t border-rule pt-6 text-[13px] text-ink-4">
+          In development. Sample data throughout — company details, vessel names and identifiers are
+          placeholders.
+        </p>
       </footer>
     </div>
   );

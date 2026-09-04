@@ -303,10 +303,10 @@ export function QuoteWidget() {
         </div>
 
         <Link
-          href="/book"
+          href="/track"
           className="flex h-[60px] items-center justify-center gap-3 rounded-[16px] bg-brand text-[17px] font-bold text-ink-invert"
         >
-          Start booking
+          Track a shipment
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
             <path
               d="M3 9h12m-5-5 5 5-5 5"

@@ -38,7 +38,7 @@ export default function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className="grid gap-16 px-6 py-16 md:px-14 md:py-20 lg:grid-cols-[minmax(0,1fr)_500px] lg:gap-20">
+      <section id="quote" className="grid gap-16 px-6 py-16 md:px-14 md:py-20 lg:grid-cols-[minmax(0,1fr)_500px] lg:gap-20">
         <div className="flex flex-col gap-7 pt-2">
           <span className="inline-flex w-fit items-center gap-[9px] rounded-full bg-brand-tint px-4 py-[9px]">
             <span className="h-[7px] w-[7px] rounded-full bg-ok" />
@@ -162,7 +162,7 @@ export default function HomePage() {
         </div>
         <p className="mt-4 text-[15px] text-ink-4">
           Australian dollars, before 10% GST. Smallest we charge for is 0.10 m³.{' '}
-          <Link href="/book" className="font-semibold">
+          <Link href="/#quote" className="font-semibold">
             Get an exact price →
           </Link>
         </p>

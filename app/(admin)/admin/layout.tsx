@@ -25,17 +25,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="px-2 pb-[10px] pt-[22px] text-[11px] font-bold text-ink-4 first:pt-0">
               {section.group}
             </span>
-            {section.items.map(([label, href, active]) => (
-              <Link
-                key={href}
-                href={href}
-                className={`mb-[3px] flex h-[42px] items-center gap-3 rounded-[10px] px-3 text-sm ${
-                  active ? 'bg-brand-tint font-bold text-brand' : 'font-medium text-ink-2'
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
+            {section.items.map(([label, href, active]) =>
+              active ? (
+                <Link
+                  key={href}
+                  href={href}
+                  className="mb-[3px] flex h-[42px] items-center gap-3 rounded-[10px] bg-brand-tint px-3 text-sm font-bold text-brand"
+                >
+                  {label}
+                </Link>
+              ) : (
+                // Not built yet — a dead link is worse than an honest disabled one.
+                <span
+                  key={href}
+                  aria-disabled="true"
+                  title="Not built yet"
+                  className="mb-[3px] flex h-[42px] cursor-not-allowed items-center gap-3 rounded-[10px] px-3 text-sm font-medium text-ink-4"
+                >
+                  {label}
+                </span>
+              ),
+            )}
           </div>
         ))}
 
