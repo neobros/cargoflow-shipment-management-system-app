@@ -33,12 +33,12 @@ export function BillingPage() {
 
   return (
     <>
-      <header className="flex h-[68px] items-center justify-between border-b border-rule bg-panel px-8">
+      <header className="flex h-[68px] items-center justify-between border-b border-rule bg-panel px-5 sm:px-8">
         <span className="text-[19px] font-bold tracking-[-0.015em]">Invoices &amp; adjustments</span>
         <span className="text-[13px] font-medium text-ink-4">{user?.roleLabel}</span>
       </header>
 
-      <div className="flex flex-col gap-5 px-8 pb-9 pt-[26px]">
+      <div className="flex flex-col gap-5 px-5 pb-9 pt-[26px] sm:px-8">
         <p className="max-w-[76ch] text-[15px] leading-[1.6] text-ink-3">
           Invoices raise themselves when a booking is fully loaded. This page is only for the ones that need
           a decision.
@@ -59,8 +59,8 @@ export function BillingPage() {
         )}
 
         {data && (
-          <div className="overflow-hidden rounded-[14px] border border-rule bg-panel">
-            <div className="grid grid-cols-[160px_140px_100px_100px_110px_150px_minmax(0,1fr)] gap-3 border-b border-rule bg-panel-2 px-5 py-3">
+          <div className="overflow-x-auto rounded-[14px] border border-rule bg-panel">
+            <div className="grid min-w-[900px] grid-cols-[160px_140px_100px_100px_110px_150px_minmax(0,1fr)] gap-3 border-b border-rule bg-panel-2 px-5 py-3">
               {['Adjustment', 'Booking', 'Booked', 'Now', 'Change', 'State', 'Actions'].map((head) => (
                 <span key={head} className="text-[11px] font-bold text-ink-3">
                   {head}
@@ -77,7 +77,7 @@ export function BillingPage() {
               adjustments.map((adjustment) => (
                 <div
                   key={adjustment.reference}
-                  className="grid grid-cols-[160px_140px_100px_100px_110px_150px_minmax(0,1fr)] items-center gap-3 border-b border-rule-2 px-5 py-4 last:border-b-0"
+                  className="grid min-w-[900px] grid-cols-[160px_140px_100px_100px_110px_150px_minmax(0,1fr)] items-center gap-3 border-b border-rule-2 px-5 py-4 last:border-b-0"
                 >
                   <span className="tnum text-[13px] font-medium">{adjustment.reference}</span>
                   <span className="tnum text-[13px]">{adjustment.bookingRef}</span>

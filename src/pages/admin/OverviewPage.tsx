@@ -44,7 +44,7 @@ export function OverviewPage() {
 
   return (
     <>
-      <header className="flex h-[68px] items-center justify-between border-b border-rule bg-panel px-8">
+      <header className="flex h-[68px] items-center justify-between border-b border-rule bg-panel px-5 sm:px-8">
         <span className="text-[19px] font-bold tracking-[-0.015em]">Operations overview</span>
         <span className="text-[13px] font-medium text-ink-4">
           {new Date().toLocaleString('en-AU', {
@@ -56,7 +56,7 @@ export function OverviewPage() {
         </span>
       </header>
 
-      <div className="flex flex-col gap-[22px] px-8 pb-9 pt-[26px]">
+      <div className="flex flex-col gap-[22px] px-5 pb-9 pt-[26px] sm:px-8">
         {loading && <p className="text-[15px] text-ink-3">Loading…</p>}
 
         {error && error.status !== 403 && (
@@ -94,7 +94,7 @@ export function OverviewPage() {
               ))}
             </div>
 
-            <div className="overflow-hidden rounded-[14px] border border-rule bg-panel">
+            <div className="overflow-x-auto rounded-[14px] border border-rule bg-panel">
               <div className="flex items-center justify-between border-b border-rule px-[22px] py-[18px]">
                 <div className="flex items-center gap-[11px]">
                   <span className="text-base font-bold tracking-[-0.01em]">Needs a person</span>
@@ -125,7 +125,7 @@ export function OverviewPage() {
                   return (
                     <div
                       key={item.id}
-                      className="grid grid-cols-[110px_150px_minmax(0,1fr)_80px_110px] items-center gap-[14px] border-b border-rule-2 px-[22px] py-[15px] last:border-b-0"
+                      className="grid min-w-[720px] grid-cols-[110px_150px_minmax(0,1fr)_80px_110px] items-center gap-[14px] border-b border-rule-2 px-[22px] py-[15px] last:border-b-0"
                     >
                       <span
                         className={`inline-flex w-fit items-center gap-[7px] rounded-[7px] px-[10px] py-[5px] ${tone.chip}`}

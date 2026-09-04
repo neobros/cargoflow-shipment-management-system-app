@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { LogoutButton } from '@/components/admin/LogoutButton';
 import { LogoTile } from '@/components/Logo';
@@ -35,6 +36,10 @@ const NAV = [
 export function DashboardLayout() {
   const { user, checking } = useAuth();
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Navigating on a phone should close the drawer behind you.
+  useEffect(() => setMenuOpen(false), [location.pathname]);
 
   if (checking) {
     return (
@@ -56,7 +61,37 @@ export function DashboardLayout() {
 
   return (
     <div className="flex min-h-screen">
-      <aside className="flex w-[248px] shrink-0 flex-col border-r border-rule bg-panel px-4 py-[22px]">
+      {/* Phone chrome: the sidebar becomes a drawer behind this bar. */}
+      <div className="fixed inset-x-0 top-0 z-30 flex h-14 items-center gap-3 border-b border-rule bg-panel px-4 md:hidden">
+        <button
+          type="button"
+          onClick={() => setMenuOpen(true)}
+          aria-label="Open the menu"
+          aria-expanded={menuOpen}
+          className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-panel-2"
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+            <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+        </button>
+        <LogoTile size={30} mark={22} />
+        <span className="text-[15px] font-bold tracking-[-0.01em]">CargoFlow</span>
+      </div>
+
+      {menuOpen && (
+        <button
+          type="button"
+          aria-label="Close the menu"
+          onClick={() => setMenuOpen(false)}
+          className="fixed inset-0 z-40 bg-black/40 md:hidden"
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-[248px] shrink-0 flex-col overflow-y-auto border-r border-rule bg-panel px-4 py-[22px] transition-transform duration-200 md:static md:translate-x-0 md:transition-none ${
+          menuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
         <Link to="/admin" className="flex items-center gap-[11px] px-2 pb-6">
           <LogoTile size={36} mark={26} />
           <div className="flex flex-col gap-[3px]">
@@ -121,7 +156,8 @@ export function DashboardLayout() {
         </div>
       </aside>
 
-      <div className="flex min-w-0 flex-grow flex-col">
+      {/* pt-14 clears the fixed phone bar; the bar is gone from md up. */}
+      <div className="flex min-w-0 flex-grow flex-col pt-14 md:pt-0">
         <Outlet />
       </div>
     </div>

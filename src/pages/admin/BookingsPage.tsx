@@ -32,12 +32,12 @@ export function BookingsPage() {
 
   return (
     <>
-      <header className="flex h-[68px] items-center justify-between border-b border-rule bg-panel px-8">
+      <header className="flex h-[68px] items-center justify-between border-b border-rule bg-panel px-5 sm:px-8">
         <span className="text-[19px] font-bold tracking-[-0.015em]">Bookings</span>
         <span className="tnum text-[13px] font-medium text-ink-4">{bookings.length} shown</span>
       </header>
 
-      <div className="flex flex-col gap-5 px-8 pb-9 pt-[26px]">
+      <div className="flex flex-col gap-5 px-5 pb-9 pt-[26px] sm:px-8">
         {loading && <p className="text-[15px] text-ink-3">Loading…</p>}
         {error && (
           <div className="rounded-[12px] bg-alert-tint px-5 py-4 text-[14px] text-alert-ink">
@@ -46,8 +46,8 @@ export function BookingsPage() {
         )}
 
         {data && (
-          <div className="overflow-hidden rounded-[14px] border border-rule bg-panel">
-            <div className="grid grid-cols-[150px_minmax(0,1fr)_170px_70px_150px_110px_110px] gap-3 border-b border-rule bg-panel-2 px-5 py-3">
+          <div className="overflow-x-auto rounded-[14px] border border-rule bg-panel">
+            <div className="grid min-w-[900px] grid-cols-[150px_minmax(0,1fr)_170px_70px_150px_110px_110px] gap-3 border-b border-rule bg-panel-2 px-5 py-3">
               {['Reference', 'Customer', 'Lane', 'Pcs', 'Status', 'Booked', 'Now'].map((head) => (
                 <span key={head} className="text-[11px] font-bold text-ink-3">
                   {head}
@@ -64,7 +64,7 @@ export function BookingsPage() {
               bookings.map((booking) => (
                 <div
                   key={booking.reference}
-                  className="grid grid-cols-[150px_minmax(0,1fr)_170px_70px_150px_110px_110px] items-center gap-3 border-b border-rule-2 px-5 py-4 last:border-b-0"
+                  className="grid min-w-[900px] grid-cols-[150px_minmax(0,1fr)_170px_70px_150px_110px_110px] items-center gap-3 border-b border-rule-2 px-5 py-4 last:border-b-0"
                 >
                   <Link to={`/track?id=${booking.reference}`} className="tnum text-[13px] font-semibold">
                     {booking.reference}

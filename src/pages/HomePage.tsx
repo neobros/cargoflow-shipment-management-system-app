@@ -52,7 +52,7 @@ export function HomePage() {
     <>
       <section
         id="quote"
-        className="grid gap-16 px-6 py-16 md:px-14 md:py-20 lg:grid-cols-[minmax(0,1fr)_500px] lg:gap-20"
+        className="grid gap-10 px-5 py-12 sm:px-6 md:px-14 md:py-20 lg:grid-cols-[minmax(0,1fr)_500px] lg:gap-20"
       >
         <div className="flex flex-col gap-7 pt-2">
           <span className="inline-flex w-fit items-center gap-[9px] rounded-full bg-brand-tint px-4 py-[9px]">
@@ -62,11 +62,11 @@ export function HomePage() {
             </span>
           </span>
 
-          <h1 className="font-display text-[clamp(44px,7vw,68px)] font-extrabold leading-[1.02] tracking-[-0.035em] text-balance">
+          <h1 className="font-display text-[clamp(32px,7vw,68px)] font-extrabold leading-[1.02] tracking-[-0.035em] text-balance">
             Send your boxes home for less.
           </h1>
 
-          <p className="max-w-[30ch] text-[19px] leading-[1.6] text-ink-2">
+          <p className="max-w-[34ch] text-[17px] leading-[1.6] text-ink-2 sm:text-[19px]">
             Get a price in twenty seconds. Drop your boxes at our Colombo depot. We weigh every one and tell
             you the real price before we charge you a cent.
           </p>
@@ -95,21 +95,21 @@ export function HomePage() {
         <QuoteWidget />
       </section>
 
-      <section id="how" className="px-6 py-20 md:px-14">
+      <section id="how" className="px-5 py-14 sm:px-6 md:px-14 md:py-20">
         <h2 className="mb-11 max-w-[20ch] font-display text-[clamp(30px,4vw,42px)] font-bold leading-[1.06] tracking-[-0.03em]">
           Three steps, and we do the hard part
         </h2>
 
-        <div className="grid gap-[26px] md:grid-cols-3">
+        <div className="grid gap-[18px] sm:gap-[26px] md:grid-cols-3">
           {steps.map((step) => (
-            <div key={step.n} className={`flex flex-col gap-5 rounded-[24px] p-[34px] ${step.tint}`}>
+            <div key={step.n} className={`flex flex-col gap-4 rounded-[24px] p-7 sm:gap-5 sm:p-[34px] ${step.tint}`}>
               <span
                 className={`flex h-[52px] w-[52px] items-center justify-center rounded-full ${step.dot} font-display text-[21px] font-extrabold text-ink-invert`}
               >
                 {step.n}
               </span>
               <h3
-                className={`font-display text-[25px] font-bold leading-[1.12] tracking-[-0.02em] ${step.ink}`}
+                className={`font-display text-[22px] font-bold leading-[1.12] tracking-[-0.02em] sm:text-[25px] ${step.ink}`}
               >
                 {step.title}
               </h3>
@@ -119,32 +119,32 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="mx-6 mb-20 grid items-center gap-10 rounded-[28px] bg-deep p-10 md:mx-14 md:p-14 lg:grid-cols-[minmax(0,1fr)_560px]">
+      <section className="mx-5 mb-14 grid items-center gap-8 rounded-[28px] bg-deep p-7 sm:mx-6 md:mx-14 md:mb-20 md:p-14 lg:grid-cols-[minmax(0,1fr)_560px]">
         <div className="flex flex-col gap-[14px]">
-          <h2 className="font-display text-[clamp(28px,3.5vw,36px)] font-bold leading-[1.08] tracking-[-0.03em] text-white">
+          <h2 className="font-display text-[clamp(24px,3.5vw,36px)] font-bold leading-[1.08] tracking-[-0.03em] text-white">
             Already sent something?
           </h2>
-          <p className="text-[17px] leading-[1.55] text-[#9cc5c0]">
+          <p className="text-[15px] leading-[1.55] text-[#9cc5c0] sm:text-[17px]">
             Track one box or a whole booking. No account, no password — just the number on your label.
           </p>
         </div>
-        <form action="/track" className="flex gap-3">
+        <form action="/track" className="flex flex-col gap-3 sm:flex-row">
           <input
             name="id"
             placeholder="CF-8817-001"
             aria-label="Tracking number"
-            className="tnum h-16 flex-grow rounded-[16px] bg-panel px-[22px] text-[17px] text-ink"
+            className="tnum h-14 w-full min-w-0 rounded-[16px] bg-panel px-5 text-[16px] text-ink sm:h-16 sm:flex-grow sm:px-[22px] sm:text-[17px]"
           />
           <button
             type="submit"
-            className="h-16 rounded-[16px] bg-alert px-8 text-[17px] font-bold text-ink-invert"
+            className="h-14 shrink-0 whitespace-nowrap rounded-[16px] bg-alert px-8 text-[16px] font-bold text-ink-invert sm:h-16 sm:text-[17px]"
           >
             Track it
           </button>
         </form>
       </section>
 
-      <section id="prices" className="px-6 pb-20 md:px-14">
+      <section id="prices" className="px-5 pb-14 sm:px-6 md:px-14 md:pb-20">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <h2 className="font-display text-[clamp(30px,4vw,42px)] font-bold leading-[1.06] tracking-[-0.03em]">
             What you pay
@@ -153,7 +153,7 @@ export function HomePage() {
         </div>
 
         <div className="overflow-hidden rounded-[22px] border border-rule">
-          <div className="grid grid-cols-[2.2fr_1.6fr_1fr_1fr] bg-panel-2 px-6 py-[18px] md:px-[30px]">
+          <div className="grid grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,1fr)] gap-3 bg-panel-2 px-5 py-[18px] sm:grid-cols-[2.2fr_1.6fr_1fr_1fr] sm:px-6 md:px-[30px]">
             <span className="text-[13px] font-bold text-ink-3">Charge</span>
             <span className="hidden text-[13px] font-bold text-ink-3 sm:block">Worked out from</span>
             <span className="text-right text-[13px] font-bold text-ink-3">By sea</span>
@@ -162,12 +162,12 @@ export function HomePage() {
           {prices.map(([charge, basis, sea, air]) => (
             <div
               key={charge}
-              className="grid grid-cols-[2.2fr_1.6fr_1fr_1fr] items-center border-t border-rule-2 px-6 py-[22px] md:px-[30px]"
+              className="grid grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_minmax(0,1fr)] items-center gap-3 border-t border-rule-2 px-5 py-5 sm:grid-cols-[2.2fr_1.6fr_1fr_1fr] sm:px-6 sm:py-[22px] md:px-[30px]"
             >
-              <span className="text-[17px] font-semibold">{charge}</span>
+              <span className="text-[15px] font-semibold sm:text-[17px]">{charge}</span>
               <span className="hidden text-[15px] text-ink-3 sm:block">{basis}</span>
-              <span className="tnum text-right text-[17px] font-bold">{sea}</span>
-              <span className="tnum text-right text-[17px] font-bold">{air}</span>
+              <span className="tnum text-right text-[15px] font-bold sm:text-[17px]">{sea}</span>
+              <span className="tnum text-right text-[15px] font-bold sm:text-[17px]">{air}</span>
             </div>
           ))}
         </div>

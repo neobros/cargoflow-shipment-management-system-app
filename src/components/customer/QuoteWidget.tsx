@@ -156,7 +156,7 @@ export function QuoteWidget() {
 
   return (
     <div className="overflow-hidden rounded-[24px] border border-rule bg-panel shadow-[0_2px_4px_rgba(11,31,29,.04),0_18px_44px_rgba(11,31,29,.09)]">
-      <div className="flex items-center justify-between bg-panel-2 px-[26px] py-[22px]">
+      <div className="flex items-center justify-between gap-3 bg-panel-2 px-5 py-[22px] sm:px-[26px]">
         <span className="font-display text-[17px] font-bold tracking-[-0.01em]">What will it cost?</span>
         <span
           className="rounded-full bg-panel px-[13px] py-[7px] text-xs font-bold text-ink-3"
@@ -166,7 +166,7 @@ export function QuoteWidget() {
         </span>
       </div>
 
-      <div className="flex flex-col gap-5 p-[26px]">
+      <div className="flex flex-col gap-5 p-5 sm:p-[26px]">
         {/* Route */}
         <label className="flex flex-col gap-[9px]">
           <span className="text-[13px] font-bold text-ink-2">Where is it going?</span>
@@ -237,7 +237,7 @@ export function QuoteWidget() {
         </label>
 
         {/* Measurements */}
-        <div className="grid grid-cols-4 gap-[10px]">
+        <div className="grid grid-cols-2 gap-[10px] sm:grid-cols-4">
           {(
             [
               ['Length', 'lengthCm'],
@@ -288,7 +288,7 @@ export function QuoteWidget() {
                   <span className="text-sm font-bold">Your price</span>
                   <span className="text-xs font-medium text-ink-4">excluding GST</span>
                 </div>
-                <span className="font-display text-[38px] font-extrabold leading-none tracking-[-0.03em] text-brand">
+                <span className="tnum font-display text-[clamp(28px,8vw,38px)] font-extrabold leading-none tracking-[-0.03em] text-brand">
                   {quote.totalDisplay}
                 </span>
               </div>

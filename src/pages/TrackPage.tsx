@@ -25,7 +25,7 @@ export function TrackPage() {
   };
 
   return (
-    <div className="mx-auto max-w-[900px] px-6 py-12 md:px-14 md:py-16">
+    <div className="mx-auto max-w-[900px] px-5 py-10 sm:px-6 md:px-14 md:py-16">
       <h1 className="font-display text-[clamp(34px,5vw,46px)] font-extrabold leading-[1.04] tracking-[-0.035em]">
         Track a box
       </h1>
@@ -79,8 +79,8 @@ function Result({ data }: { data: Tracking }) {
     <div className="mt-10 flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-4">
-            <h2 className="font-display text-[32px] font-bold leading-none tracking-[-0.03em]">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+            <h2 className="font-display text-[clamp(24px,6vw,32px)] font-bold leading-[1.1] tracking-[-0.03em]">
               {booking.route.from} → {booking.route.to}
             </h2>
             <span
@@ -103,7 +103,7 @@ function Result({ data }: { data: Tracking }) {
 
       {adjustment && (
         <div className="overflow-hidden rounded-[24px] border border-alert bg-panel">
-          <div className="flex items-center gap-4 bg-alert-tint px-7 py-6">
+          <div className="flex items-center gap-4 bg-alert-tint px-5 py-5 sm:px-7 sm:py-6">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-alert">
               <svg width="24" height="24" viewBox="0 0 26 26" fill="none" aria-hidden="true">
                 <path d="M13 4 23 21.5H3L13 4Z" stroke="#fff" strokeWidth="1.9" strokeLinejoin="round" />
@@ -121,14 +121,14 @@ function Result({ data }: { data: Tracking }) {
             </div>
           </div>
 
-          <div className="flex flex-col gap-6 p-7">
+          <div className="flex flex-col gap-6 p-5 sm:p-7">
             <p className="max-w-[60ch] text-[16px] leading-[1.6] text-ink-2">
               They took up more room than the sizes you gave us, so the price has gone up.{' '}
               <strong className="font-bold text-ink">Nothing has been charged.</strong>
             </p>
 
             <div className="flex flex-wrap items-center gap-5">
-              <div className="flex flex-grow flex-col gap-2 rounded-[18px] bg-panel-2 px-6 py-5">
+              <div className="flex flex-grow flex-col gap-2 rounded-[18px] bg-panel-2 px-5 py-5 sm:px-6">
                 <span className="text-[13px] font-semibold text-ink-4">You booked</span>
                 <span className="font-display text-[30px] font-bold leading-none tracking-[-0.03em] text-ink-4 line-through">
                   A${adjustment.bookedTotal}
@@ -145,8 +145,8 @@ function Result({ data }: { data: Tracking }) {
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-4">
-              <button className="h-14 rounded-full bg-alert px-8 text-[16px] font-bold text-ink-invert">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4">
+              <button className="h-14 rounded-full bg-alert px-6 text-[15px] font-bold text-ink-invert sm:px-8 sm:text-[16px]">
                 Yes, that&apos;s fine — A${adjustment.verifiedTotal}
               </button>
               <button className="h-14 rounded-full bg-panel-2 px-6 text-[15px] font-bold text-ink-2">
@@ -171,7 +171,7 @@ function Result({ data }: { data: Tracking }) {
           {pieces.map((piece) => (
             <div
               key={piece.trackingId ?? piece.sequence}
-              className={`flex flex-wrap items-center gap-4 rounded-[16px] px-5 py-4 ${
+              className={`flex flex-col gap-2 rounded-[16px] px-4 py-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 sm:px-5 ${
                 piece.changed
                   ? 'border border-alert-tint bg-alert-tint'
                   : matchedTrackingId === piece.trackingId
@@ -179,23 +179,27 @@ function Result({ data }: { data: Tracking }) {
                     : 'bg-panel-2'
               }`}
             >
-              <span className="tnum w-[130px] text-[14px] font-semibold">{piece.trackingId}</span>
-              <span className="flex-grow text-[15px] font-medium capitalize">
-                {piece.packaging.replace(/_/g, ' ')}
-              </span>
-              <span className="tnum text-[13px] text-ink-4">you said {piece.declared.volume}</span>
-              <span
-                className={`tnum text-[13px] font-semibold ${piece.changed ? 'text-alert-ink' : 'text-ink-2'}`}
-              >
-                we got {piece.verified?.volume ?? '—'}
-              </span>
-              <span
-                className={`rounded-full px-3 py-[6px] text-[12px] font-bold ${
-                  piece.changed ? 'bg-panel text-alert-ink' : 'bg-ok-tint text-ok-ink'
-                }`}
-              >
-                {piece.statusLabel}
-              </span>
+              <div className="flex items-center justify-between gap-3 sm:contents">
+                <span className="tnum text-[14px] font-semibold sm:w-[130px]">{piece.trackingId}</span>
+                <span
+                  className={`shrink-0 rounded-full px-3 py-[6px] text-[12px] font-bold sm:order-last ${
+                    piece.changed ? 'bg-panel text-alert-ink' : 'bg-ok-tint text-ok-ink'
+                  }`}
+                >
+                  {piece.statusLabel}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 sm:contents">
+                <span className="text-[15px] font-medium capitalize sm:flex-grow">
+                  {piece.packaging.replace(/_/g, ' ')}
+                </span>
+                <span className="tnum text-[13px] text-ink-4">you said {piece.declared.volume}</span>
+                <span
+                  className={`tnum text-[13px] font-semibold ${piece.changed ? 'text-alert-ink' : 'text-ink-2'}`}
+                >
+                  we got {piece.verified?.volume ?? '—'}
+                </span>
+              </div>
             </div>
           ))}
         </div>
