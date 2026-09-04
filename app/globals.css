@@ -222,53 +222,70 @@
 
 /* ── Base ─────────────────────────────────────────────────────────────── */
 
-* {
-  box-sizing: border-box;
+/*
+ * These MUST live in @layer base.
+ *
+ * Unlayered CSS beats anything inside a layer, whatever the specificity — so an
+ * unlayered `a { color: ... }` silently overrides every text-colour utility on
+ * every link in the app, and a brand-coloured button ends up with brand-coloured
+ * text on it. Layering puts these back underneath the utilities where they
+ * belong.
+ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* A default for links that carry no colour utility of their own. */
+  a {
+    color: var(--brand);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--brand-deep);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+
+  button,
+  input,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  input::placeholder {
+    color: var(--ink-4);
+  }
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font-body), system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-/* Numbers a person might read down a phone line, compare in a column or
-   dispute are always monospace and always tabular. */
+/*
+ * Numbers a person might read down a phone line, compare in a column or dispute
+ * are always monospace and always tabular. Deliberately unlayered so it wins
+ * over any font utility that lands on the same element.
+ */
 .tnum {
   font-family: var(--font-mono), ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
-}
-
-a {
-  color: var(--brand);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--brand-deep);
-}
-
-:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 2px;
-}
-
-button,
-input,
-select {
-  font: inherit;
-  color: inherit;
-}
-
-input::placeholder {
-  color: var(--ink-4);
 }
 
 @media (prefers-reduced-motion: reduce) {
