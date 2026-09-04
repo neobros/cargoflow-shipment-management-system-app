@@ -1,6 +1,6 @@
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { LogoutButton } from '@/components/admin/LogoutButton';
-import { LogoMark } from '@/components/Logo';
+import { LogoTile } from '@/components/Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { can } from '@/lib/admin';
 
@@ -58,9 +58,7 @@ export function DashboardLayout() {
     <div className="flex min-h-screen">
       <aside className="flex w-[248px] shrink-0 flex-col border-r border-rule bg-panel px-4 py-[22px]">
         <Link to="/admin" className="flex items-center gap-[11px] px-2 pb-6">
-          <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-brand">
-            <LogoMark stroke="#ffffff" />
-          </span>
+          <LogoTile size={36} mark={26} />
           <div className="flex flex-col gap-[3px]">
             <span className="text-base font-bold leading-none tracking-[-0.01em]">CargoFlow</span>
             <span className="text-[11px] font-semibold leading-none text-ink-4">Operations</span>

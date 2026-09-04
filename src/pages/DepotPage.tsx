@@ -1,4 +1,4 @@
-import { LogoMark } from '@/components/Logo';
+import { LogoTile } from '@/components/Logo';
 
 /**
  * The depot surface, deliberately austere: square corners, hairline rules, no
@@ -11,7 +11,7 @@ export function DepotPage() {
     <div data-surface="depot" className="min-h-screen bg-bg text-ink">
       <header className="flex h-14 items-center justify-between bg-deep px-[26px]">
         <div className="flex items-center gap-3">
-          <LogoMark stroke="var(--brand)" />
+          <LogoTile size={32} mark={24} />
           <span className="text-sm font-bold uppercase tracking-[0.14em] text-ink-invert">
             Receiving station
           </span>

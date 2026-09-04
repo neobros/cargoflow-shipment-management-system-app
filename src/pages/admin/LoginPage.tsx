@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { LoginForm } from '@/components/admin/LoginForm';
-import { LogoMark } from '@/components/Logo';
+import { LogoTile } from '@/components/Logo';
 import { useAuth } from '@/hooks/useAuth';
 
 const ACCOUNTS = [
@@ -28,9 +28,7 @@ export function LoginPage() {
     <div className="flex min-h-screen items-center justify-center px-6 py-16">
       <div className="w-full max-w-[420px]">
         <div className="mb-8 flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand">
-            <LogoMark size={24} stroke="#ffffff" />
-          </span>
+          <LogoTile size={44} mark={32} />
           <div className="flex flex-col gap-1">
             <span className="text-[19px] font-bold leading-none tracking-[-0.015em]">CargoFlow</span>
             <span className="text-[12px] font-semibold leading-none text-ink-4">Operations</span>
