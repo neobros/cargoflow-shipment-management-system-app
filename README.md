@@ -40,12 +40,20 @@ both set up for that origin, so the backend needs no change.
 | Route | Surface | What it is |
 | --- | --- | --- |
 | `/` | Customer | Landing page with a live price calculator |
+| `/book` | Customer | Booking wizard — boxes, both parties, price, submit |
 | `/track?id=…` | Customer | Public tracking — accepts a booking ref or a tracking ID |
 | `/admin/login` | Admin | Staff sign in |
 | `/admin` | Admin | Operations overview — the exceptions queue |
 | `/admin/billing` | Admin | Price changes, with approve / waive / remind |
 | `/admin/bookings` | Admin | Booking list |
-| `/depot` | Depot | Receiving station shell |
+| `/admin/containers` | Admin | Loading board, sealing, Master Bill of Lading |
+| `/admin/invoices` | Admin | Issue invoices, mark paid, printable tax invoice |
+| `/admin/messages` | Admin | Every email and SMS the system sent |
+| `/depot` | Depot | Receiving station — scan, measure, re-rate, label |
+
+`/depot` requires a staff session, like the admin panel. It renders its own
+sign-in rather than bouncing to `/admin/login`, because the person at the
+receiving bench is not going to the operations panel.
 
 ### Deploying a single-page app
 
@@ -138,14 +146,28 @@ server. A price a customer sees and a price stored on their booking have to come
 from the same code, and there is only one copy of it — in the backend's pricing
 engine, under test.
 
+## The depot bench
+
+`/depot` is built around the scanner, because on a warehouse floor that is the
+only input device: it types an ID and presses Enter. So the scan box keeps
+focus after every action, and one field takes both kinds of input — a tracking
+ID opens the measuring bench, anything else is treated as a booking reference
+and received.
+
+Labels print through the browser at 100 × 150 mm, the standard thermal stock.
+The barcode arrives from the API as SVG rather than an image, so it prints at
+the label printer's own resolution; a resampled barcode is one that
+intermittently fails to scan, and a scanner that works four times in five is
+worse than one that never works, because people stop trusting it.
+
 ## Status
 
-Built: the three surfaces and their token systems, the customer landing page,
-the live quote calculator, public tracking with the re-rate approval, staff
-login with roles, and the admin overview, billing and bookings pages.
+Every requirement in the brief is wired end to end. The backend's
+`scripts/walk-the-brief.py` proves it over HTTP in the order a shipment moves.
 
-Next: the three-step booking wizard, customer OTP sign-in, and the depot
-verification bench against `/v1/quotes/compare` — which is already built and
-tested on the backend.
+Not built: customer accounts and OTP sign-in (tracking is by reference, which
+is deliberate), a real email/SMS provider behind the notification queue, rate
+card editing in the UI, and the arrival end — devanning and proof of
+delivery.
 
 The full UI/UX design these screens are built from lives in `../design`.

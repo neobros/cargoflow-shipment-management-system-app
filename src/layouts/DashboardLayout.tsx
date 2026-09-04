@@ -11,14 +11,16 @@ const NAV = [
     items: [
       { label: 'Overview', to: '/admin', permission: 'admin:access', built: true, end: true },
       { label: 'Bookings', to: '/admin/bookings', permission: 'bookings:read', built: true, end: false },
-      { label: 'Warehouse', to: '/admin/warehouse', permission: 'bookings:read', built: false, end: false },
-      { label: 'Containers', to: '/admin/containers', permission: 'bookings:read', built: false, end: false },
+      { label: 'Depot floor', to: '/depot', permission: 'depot:receive', built: true, end: false },
+      { label: 'Containers', to: '/admin/containers', permission: 'containers:read', built: true, end: false },
     ],
   },
   {
     group: 'MONEY',
     items: [
       { label: 'Billing', to: '/admin/billing', permission: 'adjustments:read', built: true, end: false },
+      { label: 'Invoices', to: '/admin/invoices', permission: 'invoices:issue', built: true, end: false },
+      { label: 'Messages', to: '/admin/messages', permission: 'adjustments:read', built: true, end: false },
       { label: 'Rate cards', to: '/admin/rates', permission: 'rates:read', built: false, end: false },
       { label: 'Customers', to: '/admin/customers', permission: 'bookings:read', built: false, end: false },
     ],

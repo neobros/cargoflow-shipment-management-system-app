@@ -26,7 +26,13 @@ export const request = async <T>(path: string, init?: RequestInit): Promise<T> =
     response = await fetch(`${API_URL}${path}`, {
       ...init,
       credentials: 'include',
-      headers: { 'content-type': 'application/json', ...init?.headers },
+      headers: {
+        // Only claim a JSON body when there is one. Declaring the content type
+        // on a bodyless POST — which several of these routes are — makes a
+        // strict server reject the request before it reaches the handler.
+        ...(init?.body === undefined ? {} : { 'content-type': 'application/json' }),
+        ...init?.headers,
+      },
     });
   } catch {
     // A dead API is a normal condition in development, not an exception the

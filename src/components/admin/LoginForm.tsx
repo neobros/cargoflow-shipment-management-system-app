@@ -3,10 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ApiError } from '@/lib/http';
 
-export function LoginForm() {
+export function LoginForm({
+  redirectTo = '/admin',
+  defaultEmail = 'billing@cargoflow.test',
+}: {
+  redirectTo?: string;
+  defaultEmail?: string;
+} = {}) {
   const navigate = useNavigate();
   const { signIn } = useAuth();
-  const [email, setEmail] = useState('billing@cargoflow.test');
+  const [email, setEmail] = useState(defaultEmail);
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -18,7 +24,7 @@ export function LoginForm() {
 
     try {
       await signIn(email, password);
-      navigate('/admin', { replace: true });
+      navigate(redirectTo, { replace: true });
     } catch (e) {
       setError(
         e instanceof ApiError && e.code === 'network_unreachable'

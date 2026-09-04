@@ -2,6 +2,7 @@ import { Link, Outlet } from 'react-router-dom';
 import { Wordmark } from '@/components/Logo';
 
 const LINKS = [
+  { label: 'Send a shipment', to: '/book', hash: false },
   { label: 'Track a box', to: '/track', hash: false },
   { label: 'How it works', to: '/#how', hash: true },
   { label: 'Prices', to: '/#prices', hash: true },
@@ -31,12 +32,12 @@ export function CustomerLayout() {
             </nav>
           </div>
 
-          <a
-            href="/#quote"
+          <Link
+            to="/book"
             className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand px-5 text-[14px] font-bold text-ink-invert md:h-12 md:px-6 md:text-[15px]"
           >
-            Get a price
-          </a>
+            Send a box
+          </Link>
         </div>
 
         {/* Below md the links move to their own row rather than disappearing. */}
@@ -81,9 +82,9 @@ export function CustomerLayout() {
           <div className="flex flex-wrap gap-10 sm:gap-16">
             <div className="flex flex-col gap-[14px]">
               <span className="text-sm font-bold">Ship</span>
-              <a href="/#quote" className="text-[15px] text-ink-3">
-                Get a price
-              </a>
+              <Link to="/book" className="text-[15px] text-ink-3">
+                Send a box
+              </Link>
               <Link to="/track" className="text-[15px] text-ink-3">
                 Track a box
               </Link>
