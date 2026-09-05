@@ -2,6 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { LoginForm } from '@/components/admin/LoginForm';
 import { LogoTile } from '@/components/Logo';
 import { useAuth } from '@/hooks/useAuth';
+import { landingFor } from '@/lib/admin';
 
 const ACCOUNTS = [
   ['admin@cargoflow.test', 'Administrator'],
@@ -22,7 +23,7 @@ export function LoginPage() {
   }
 
   // Already signed in? Don't make them look at a login form.
-  if (user) return <Navigate to="/admin" replace />;
+  if (user) return <Navigate to={landingFor(user)} replace />;
 
   return (
     <div className="flex min-h-screen items-center justify-center px-6 py-16">

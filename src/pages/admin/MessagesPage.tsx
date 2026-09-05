@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAsync } from '@/hooks/useAsync';
 import { documents, type NotificationRow } from '@/lib/depot';
+import { ApiError } from '@/lib/http';
 
 const EVENT_LABELS: Record<string, string> = {
   booking_confirmed: 'Booking confirmed',
@@ -40,11 +41,31 @@ export function MessagesPage() {
   const [applied, setApplied] = useState<string | undefined>(undefined);
   const { data, error, loading } = useAsync(() => documents.notifications(applied), [applied]);
   const [open, setOpen] = useState<NotificationRow | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   // Close the reader when the list underneath it changes.
   useEffect(() => setOpen(null), [applied]);
 
   const rows = data?.notifications ?? [];
+  const health = data?.health;
+
+  const requeue = async (row: NotificationRow) => {
+    const key = `${row.entityId}:${row.event}`;
+    setBusy(key);
+    try {
+      const { requeued } = await documents.retryNotification(row.entityId, row.event);
+      setNotice(
+        requeued > 0
+          ? `${requeued} message${requeued === 1 ? '' : 's'} back in the queue. The dispatcher picks them up within fifteen seconds.`
+          : 'Nothing to requeue — it may already have gone.',
+      );
+    } catch (caught) {
+      setNotice(caught instanceof ApiError ? caught.message : 'Could not requeue that');
+    } finally {
+      setBusy(null);
+    }
+  };
 
   return (
     <>
@@ -88,6 +109,40 @@ export function MessagesPage() {
           )}
         </form>
 
+        {health && (
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              { label: 'Waiting to go', value: health.pending, urgent: false },
+              { label: 'Failed', value: health.failed, urgent: health.failed > 0 },
+              { label: 'Sent today', value: health.sentToday, urgent: false },
+            ].map((tile) => (
+              <div
+                key={tile.label}
+                className={`flex flex-col gap-2 rounded-[14px] border bg-panel p-5 ${
+                  tile.urgent ? 'border-alert' : 'border-rule'
+                }`}
+              >
+                <span
+                  className={`text-[13px] font-semibold ${tile.urgent ? 'text-alert-ink' : 'text-ink-3'}`}
+                >
+                  {tile.label}
+                </span>
+                <span
+                  className={`tnum text-[32px] font-bold leading-none ${
+                    tile.urgent ? 'text-alert-ink' : ''
+                  }`}
+                >
+                  {tile.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {notice && (
+          <p className="rounded-[12px] bg-ok-tint px-5 py-4 text-[14px] text-ok-ink">{notice}</p>
+        )}
+
         {loading && <p className="text-[15px] text-ink-3">Loading…</p>}
         {error && (
           <p className="rounded-[12px] bg-alert-tint px-5 py-4 text-[14px] text-alert-ink">
@@ -130,11 +185,17 @@ export function MessagesPage() {
                     </span>
                     <span className="tnum truncate text-[12px] text-ink-3">{row.to}</span>
                     <span
-                      className={`text-[12px] font-semibold ${
-                        row.status === 'sent' ? 'text-ok-ink' : 'text-warn-ink'
+                      className={`inline-flex w-fit items-center rounded-[7px] px-[10px] py-[5px] text-[11px] font-bold ${
+                        row.status === 'sent'
+                          ? 'bg-ok-tint text-ok-ink'
+                          : row.status === 'failed'
+                            ? 'bg-alert-tint text-alert-ink'
+                            : 'bg-warn-tint text-warn-ink'
                       }`}
+                      title={row.error ?? undefined}
                     >
                       {row.status}
+                      {row.attempts > 1 ? ` ·${row.attempts}` : ''}
                     </span>
                   </button>
                 ))}
@@ -164,15 +225,37 @@ export function MessagesPage() {
             <pre className="overflow-x-auto whitespace-pre-wrap px-5 py-4 font-sans text-[14px] leading-[1.6] text-ink-2">
               {open.body}
             </pre>
+
+            <div className="flex flex-wrap items-center gap-4 border-t border-rule px-5 py-4">
+              <span className="tnum text-[12px] text-ink-4">
+                {open.attempts} attempt{open.attempts === 1 ? '' : 's'}
+                {open.transport ? ` · via ${open.transport}` : ''}
+              </span>
+              {open.error && (
+                <span className="text-[12px] font-medium text-alert-ink">{open.error}</span>
+              )}
+              {open.status === 'failed' && (
+                <button
+                  type="button"
+                  disabled={busy === `${open.entityId}:${open.event}`}
+                  onClick={() => void requeue(open)}
+                  className="ml-auto h-10 rounded-[10px] bg-brand px-4 text-[13px] font-bold text-ink-invert disabled:opacity-40"
+                >
+                  Try again
+                </button>
+              )}
+            </div>
           </section>
         )}
 
         <p className="text-[13px] leading-[1.6] text-ink-4">
-          No email or SMS provider is connected — that is a credential and a contract, not a design
-          decision. What is here is the part that is ours: deciding what to send and to whom, and
-          making sure it goes exactly once. The database enforces one message per booking, event and
-          channel, so a retried worker cannot send a second SMS about the same price change.
+          Messages are queued, then handed to a transport by a dispatcher that retries with backoff
+          and gives up after five attempts. Which transport carries them is configuration:
+          <span className="tnum"> log</span> by default, so nothing reaches a customer until SMTP or
+          an SMS provider is set in the environment. The database enforces one message per booking,
+          event and channel, so a retry cannot send a second text about the same price change.
         </p>
+
       </div>
     </>
   );

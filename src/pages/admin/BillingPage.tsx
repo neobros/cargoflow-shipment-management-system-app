@@ -3,6 +3,27 @@ import { useAsync } from '@/hooks/useAsync';
 import { useAuth } from '@/hooks/useAuth';
 import { admin, can } from '@/lib/admin';
 
+/**
+ * One definition of the grid, used by the header and every row.
+ *
+ * They were written out twice and drifted: a column added to one was a column
+ * missing from the other. The minimum width is the fixed tracks plus the gaps
+ * plus the padding plus room for Actions — set it lower and the flexible
+ * column silently collapses to nothing.
+ */
+const BILLING_COLUMNS =
+  'grid min-w-[1140px] grid-cols-[160px_140px_100px_100px_110px_150px_minmax(240px,1fr)] gap-3 px-5';
+
+const HEADS = [
+  { label: 'Adjustment', align: 'left' },
+  { label: 'Booking', align: 'left' },
+  { label: 'Booked', align: 'right' },
+  { label: 'Now', align: 'right' },
+  { label: 'Change', align: 'right' },
+  { label: 'State', align: 'left' },
+  { label: 'Actions', align: 'left' },
+] as const;
+
 const stateChip: Record<string, string> = {
   awaiting_approval: 'bg-warn-tint text-warn-ink',
   approved: 'bg-ok-tint text-ok-ink',
@@ -60,10 +81,13 @@ export function BillingPage() {
 
         {data && (
           <div className="overflow-x-auto rounded-[14px] border border-rule bg-panel">
-            <div className="grid min-w-[900px] grid-cols-[160px_140px_100px_100px_110px_150px_minmax(0,1fr)] gap-3 border-b border-rule bg-panel-2 px-5 py-3">
-              {['Adjustment', 'Booking', 'Booked', 'Now', 'Change', 'State', 'Actions'].map((head) => (
-                <span key={head} className="text-[11px] font-bold text-ink-3">
-                  {head}
+            <div className={`${BILLING_COLUMNS} border-b border-rule bg-panel-2 py-3`}>
+              {HEADS.map(({ label, align }) => (
+                <span
+                  key={label}
+                  className={`text-[11px] font-bold text-ink-3 ${align === 'right' ? 'text-right' : ''}`}
+                >
+                  {label}
                 </span>
               ))}
             </div>
@@ -77,7 +101,7 @@ export function BillingPage() {
               adjustments.map((adjustment) => (
                 <div
                   key={adjustment.reference}
-                  className="grid min-w-[900px] grid-cols-[160px_140px_100px_100px_110px_150px_minmax(0,1fr)] items-center gap-3 border-b border-rule-2 px-5 py-4 last:border-b-0"
+                  className={`${BILLING_COLUMNS} items-center border-b border-rule-2 py-4 last:border-b-0`}
                 >
                   <span className="tnum text-[13px] font-medium">{adjustment.reference}</span>
                   <span className="tnum text-[13px]">{adjustment.bookingRef}</span>
@@ -85,9 +109,13 @@ export function BillingPage() {
                   <span className="tnum text-right text-[13px] font-semibold">
                     {adjustment.verifiedTotal}
                   </span>
-                  <span className="tnum text-right text-[13px] font-bold text-alert-ink">
-                    +{adjustment.difference}
-                    <span className="ml-1 font-medium text-ink-4">{adjustment.differencePercent}%</span>
+                  <span className="flex flex-col items-end">
+                    <span className="tnum text-[13px] font-bold text-alert-ink">
+                      +{adjustment.difference}
+                    </span>
+                    <span className="tnum text-[11px] font-medium text-ink-4">
+                      {adjustment.differencePercent}%
+                    </span>
                   </span>
                   <span
                     className={`inline-flex w-fit items-center rounded-[7px] px-[10px] py-[5px] text-[11px] font-bold ${

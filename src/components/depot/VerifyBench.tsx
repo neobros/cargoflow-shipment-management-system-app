@@ -89,8 +89,8 @@ export function VerifyBench({
     });
 
   return (
-    <section className="border-2 border-ink bg-panel">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule bg-panel-2 px-4 py-3 sm:px-5">
+    <section className="overflow-hidden rounded-[14px] border border-rule bg-panel">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule px-5 py-4">
         <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
           <span className="tnum text-[19px] font-bold">{piece.trackingId}</span>
           <span className="text-[13px] text-ink-3">
@@ -100,7 +100,7 @@ export function VerifyBench({
         <button
           type="button"
           onClick={onClose}
-          className="text-[11px] font-bold uppercase tracking-[0.1em] text-ink-3"
+          className="text-[13px] font-semibold text-ink-3"
         >
           Close
         </button>
@@ -109,7 +109,7 @@ export function VerifyBench({
       <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_300px]">
         <div>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="text-xs font-bold uppercase tracking-[0.1em] text-ink-3">
+            <span className="text-[13px] font-semibold text-ink-3">
               What the scale says
             </span>
             <button
@@ -127,7 +127,7 @@ export function VerifyBench({
               return (
                 <label key={key} className="flex flex-col gap-2">
                   <span
-                    className={`text-center text-[11px] font-bold uppercase tracking-[0.06em] ${
+                    className={`text-center text-[12px] font-semibold ${
                       isWeight ? 'text-brand' : 'text-ink-3'
                     }`}
                   >
@@ -138,8 +138,8 @@ export function VerifyBench({
                     value={draft[key]}
                     onChange={(event) => setDraft({ ...draft, [key]: event.target.value })}
                     aria-label={`Measured ${label.toLowerCase()}`}
-                    className={`tnum h-[68px] border-2 text-center text-[24px] font-bold ${
-                      isWeight ? 'border-brand bg-brand-tint text-brand-deep' : 'border-ink bg-white'
+                    className={`tnum h-[62px] rounded-[12px] border-2 text-center text-[22px] font-bold ${
+                      isWeight ? 'border-brand bg-brand-tint text-brand-deep' : 'border-rule bg-panel-2'
                     }`}
                   />
                   <span className="tnum text-center text-[11px] text-ink-4">
@@ -154,20 +154,20 @@ export function VerifyBench({
             type="button"
             disabled={!complete || busy || piece.loaded}
             onClick={commit}
-            className="mt-4 h-[60px] w-full bg-ink text-sm font-bold uppercase tracking-[0.14em] text-ink-invert disabled:opacity-35"
+            className="mt-5 h-14 w-full rounded-[12px] bg-brand text-[15px] font-bold text-ink-invert disabled:opacity-40"
           >
             {busy ? 'Recording…' : piece.loaded ? 'Already loaded' : 'Record and price'}
           </button>
 
           {error && (
-            <p className="mt-3 border-l-4 border-alert bg-alert-tint px-4 py-3 text-[14px] font-medium text-alert-ink">
+            <p className="mt-3 rounded-[12px] bg-alert-tint px-5 py-4 text-[14px] leading-[1.55] text-alert-ink">
               {error}
             </p>
           )}
         </div>
 
-        <div className="border border-rule bg-panel-2 p-4">
-          <span className="text-xs font-bold uppercase tracking-[0.1em] text-ink-3">
+        <div className="rounded-[12px] border border-rule bg-panel-2 p-5">
+          <span className="text-[13px] font-semibold text-ink-3">
             What the customer booked
           </span>
           <p className="tnum mt-3 text-[15px] font-semibold">
@@ -191,7 +191,7 @@ export function VerifyBench({
       </div>
 
       {result && (
-        <div className={`border-t-4 px-4 py-4 sm:px-5 ${OUTCOME_TONE[result.rerate.outcome]}`}>
+        <div className={`border-t px-5 py-5 ${OUTCOME_TONE[result.rerate.outcome]}`}>
           <p className="text-[15px] font-bold">{result.rerate.message}</p>
 
           {result.rerate.outcome !== 'unchanged' && (
@@ -229,7 +229,7 @@ export function VerifyBench({
             <button
               type="button"
               onClick={() => onPrint(result.trackingId)}
-              className="h-11 bg-ink px-5 text-[11px] font-bold uppercase tracking-[0.12em] text-ink-invert"
+              className="h-11 rounded-[10px] bg-brand px-5 text-[13px] font-bold text-ink-invert"
             >
               Print label
             </button>

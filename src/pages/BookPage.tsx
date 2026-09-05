@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { PartyFields, type PartyDraft, blankParty, partyProblems } from '@/components/customer/PartyFields';
 import { PieceEditor, type PieceDraft, blankPiece, toPieceInput } from '@/components/customer/PieceEditor';
 import { api, type Quote, type Reference, type ServiceMode } from '@/lib/api';
 import { ApiError } from '@/lib/http';
+import { useCustomer } from '@/hooks/useCustomer';
 import { bookings, type CreatedBooking } from '@/lib/depot';
 
 type Step = 1 | 2 | 3;
@@ -14,19 +15,49 @@ const STEPS: { n: Step; label: string; hint: string }[] = [
   { n: 3, label: 'Price and send', hint: 'Check, then book' },
 ];
 
+/** What the landing page's calculator hands over when someone presses Book. */
+interface QuoteHandover {
+  from?: string;
+  lane?: string;
+  service?: ServiceMode;
+  packaging?: PieceDraft['packaging'];
+  lengthCm?: string;
+  widthCm?: string;
+  heightCm?: string;
+  weightKg?: string;
+}
+
 export function BookPage() {
+  const handover = (useLocation().state ?? {}) as QuoteHandover;
+  const carried = handover.from === 'quote';
+
   const [step, setStep] = useState<Step>(1);
   const [reference, setReference] = useState<Reference | null>(null);
   const [referenceError, setReferenceError] = useState<string | null>(null);
 
-  const [lane, setLane] = useState('LKCMB-AUMEL');
-  const [service, setService] = useState<ServiceMode>('sea_lcl');
-  const [pieces, setPieces] = useState<PieceDraft[]>([blankPiece()]);
-  const [coverRequested, setCover] = useState(false);
-  const [declaredValue, setDeclaredValue] = useState('');
-  const [pickupRequested, setPickup] = useState(false);
+  const [lane, setLane] = useState(handover.lane ?? 'LKCMB-AUMEL');
+  const [service, setService] = useState<ServiceMode>(handover.service ?? 'sea_lcl');
+  const [pieces, setPieces] = useState<PieceDraft[]>(() =>
+    carried
+      ? [
+          {
+            ...blankPiece(handover.packaging),
+            lengthCm: handover.lengthCm ?? '',
+            widthCm: handover.widthCm ?? '',
+            heightCm: handover.heightCm ?? '',
+            weightKg: handover.weightKg ?? '',
+          },
+        ]
+      : [blankPiece()],
+  );
 
-  const [sender, setSender] = useState<PartyDraft>(blankParty('LK'));
+  // The account remembers the address they last sent from, so a returning
+  // customer is not retyping their own street every time.
+  const { account } = useCustomer();
+  const [sender, setSender] = useState<PartyDraft>(
+    () => (account?.lastSender as PartyDraft | null) ?? blankParty('LK'),
+  );
+  const [prefilled] = useState(() => Boolean(account?.lastSender));
   const [receiver, setReceiver] = useState<PartyDraft>(blankParty('AU'));
 
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -79,9 +110,6 @@ export function BookPage() {
           lane,
           service,
           pieces: readyPieces,
-          declaredValue: coverRequested ? Math.round(Number(declaredValue || 0) * 100) : 0,
-          coverRequested,
-          pickupRequested,
         })
         .then(({ quote: fresh }) => {
           if (mine !== sequence.current) return;
@@ -99,7 +127,7 @@ export function BookPage() {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [lane, service, readyPieces, coverRequested, declaredValue, pickupRequested, allPiecesComplete]);
+  }, [lane, service, readyPieces, allPiecesComplete]);
 
   const submit = async () => {
     setSubmitting(true);
@@ -109,9 +137,6 @@ export function BookPage() {
         lane,
         service,
         pieces: readyPieces,
-        declaredValue: coverRequested ? Math.round(Number(declaredValue || 0) * 100) : 0,
-        coverRequested,
-        pickupRequested,
         sender,
         receiver,
       });
@@ -140,6 +165,12 @@ export function BookPage() {
         Three steps. You will see the price before you commit, and we re-check every box on our
         scales before charging you.
       </p>
+
+      {carried && (
+        <p className="mt-6 rounded-[16px] bg-ok-tint px-5 py-4 text-[15px] leading-[1.55] text-ok-ink">
+          We have carried over the box you just priced. Change it or add more below.
+        </p>
+      )}
 
       <ol className="mt-8 flex list-none flex-col gap-2 p-0 sm:flex-row sm:gap-3">
         {STEPS.map(({ n, label, hint }) => {
@@ -193,12 +224,6 @@ export function BookPage() {
               setService={setService}
               pieces={pieces}
               setPieces={setPieces}
-              coverRequested={coverRequested}
-              setCover={setCover}
-              declaredValue={declaredValue}
-              setDeclaredValue={setDeclaredValue}
-              pickupRequested={pickupRequested}
-              setPickup={setPickup}
             />
           )}
 
@@ -206,7 +231,11 @@ export function BookPage() {
             <>
               <PartyFields
                 title="Who is sending"
-                subtitle="The person dropping the boxes at our Colombo depot. We text this number when the price changes."
+                subtitle={
+                  prefilled
+                    ? 'Filled in from your last shipment. Change anything that is different this time.'
+                    : 'The person dropping the boxes at our Colombo depot. We text this number when the price changes.'
+                }
                 value={sender}
                 onChange={setSender}
                 problems={senderProblems}
@@ -290,12 +319,6 @@ function StepOne({
   setService,
   pieces,
   setPieces,
-  coverRequested,
-  setCover,
-  declaredValue,
-  setDeclaredValue,
-  pickupRequested,
-  setPickup,
 }: {
   reference: Reference | null;
   lanes: Reference['lanes'];
@@ -305,12 +328,6 @@ function StepOne({
   setService: (v: ServiceMode) => void;
   pieces: PieceDraft[];
   setPieces: (v: PieceDraft[]) => void;
-  coverRequested: boolean;
-  setCover: (v: boolean) => void;
-  declaredValue: string;
-  setDeclaredValue: (v: string) => void;
-  pickupRequested: boolean;
-  setPickup: (v: boolean) => void;
 }) {
   const chosen = lanes.find((l) => l.code === lane);
 
@@ -366,56 +383,6 @@ function StepOne({
 
       <PieceEditor pieces={pieces} onChange={setPieces} presets={reference?.packaging ?? []} />
 
-      <section className="rounded-[22px] border border-rule bg-panel p-6">
-        <h2 className="font-display text-[21px] font-bold tracking-[-0.02em]">Anything else?</h2>
-
-        <label className="mt-5 flex cursor-pointer items-start gap-3">
-          <input
-            type="checkbox"
-            checked={coverRequested}
-            onChange={(e) => setCover(e.target.checked)}
-            className="mt-1 h-5 w-5 shrink-0 accent-[var(--brand)]"
-          />
-          <span className="flex flex-col gap-1">
-            <span className="text-[15px] font-semibold">Cover the contents</span>
-            <span className="text-[14px] leading-[1.5] text-ink-3">
-              {reference
-                ? `${reference.cover.percent}% of what you say it is worth, minimum ${reference.cover.minimum}. Without it, our liability is the carrier's minimum.`
-                : 'A percentage of the declared value.'}
-            </span>
-          </span>
-        </label>
-
-        {coverRequested && (
-          <label className="mt-4 flex flex-col gap-2 pl-8">
-            <span className="text-[13px] font-bold text-ink-3">What are the contents worth? (A$)</span>
-            <input
-              inputMode="decimal"
-              value={declaredValue}
-              onChange={(e) => setDeclaredValue(e.target.value)}
-              placeholder="1800"
-              className="tnum h-[52px] max-w-[220px] rounded-[14px] bg-panel-2 px-4 text-[17px] font-bold"
-            />
-          </label>
-        )}
-
-        <label className="mt-5 flex cursor-pointer items-start gap-3">
-          <input
-            type="checkbox"
-            checked={pickupRequested}
-            onChange={(e) => setPickup(e.target.checked)}
-            className="mt-1 h-5 w-5 shrink-0 accent-[var(--brand)]"
-          />
-          <span className="flex flex-col gap-1">
-            <span className="text-[15px] font-semibold">Collect from my address in Sri Lanka</span>
-            <span className="text-[14px] leading-[1.5] text-ink-3">
-              {reference
-                ? `${reference.surcharges.originPickup} within the Colombo district. Otherwise drop the boxes at our Peliyagoda depot for free.`
-                : 'Otherwise drop them at our depot.'}
-            </span>
-          </span>
-        </label>
-      </section>
     </>
   );
 }

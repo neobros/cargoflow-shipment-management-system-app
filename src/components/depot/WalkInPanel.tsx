@@ -103,9 +103,9 @@ export function WalkInPanel({
   };
 
   return (
-    <section className="border-2 border-ink bg-panel">
-      <div className="border-b border-rule bg-panel-2 px-4 py-3 sm:px-5">
-        <span className="text-sm font-bold uppercase tracking-[0.1em]">Walk-in express intake</span>
+    <section className="overflow-hidden rounded-[14px] border border-rule bg-panel">
+      <div className="border-b border-rule px-5 py-4">
+        <span className="text-base font-bold tracking-[-0.01em]">Walk-in express intake</span>
         <p className="mt-1 text-[13px] text-ink-3">
           Minimum details only. Boxes are measured now, so there is nothing to re-price later.
         </p>
@@ -113,7 +113,7 @@ export function WalkInPanel({
 
       <div className="grid gap-5 p-4 sm:p-5 lg:grid-cols-2">
         <fieldset className="flex flex-col gap-3 border-0 p-0">
-          <legend className="mb-1 text-xs font-bold uppercase tracking-[0.1em] text-ink-3">
+          <legend className="mb-1 text-[13px] font-semibold text-ink-3">
             Sending
           </legend>
           <Input label="Name" value={senderName} onChange={setSenderName} />
@@ -121,7 +121,7 @@ export function WalkInPanel({
         </fieldset>
 
         <fieldset className="flex flex-col gap-3 border-0 p-0">
-          <legend className="mb-1 text-xs font-bold uppercase tracking-[0.1em] text-ink-3">
+          <legend className="mb-1 text-[13px] font-semibold text-ink-3">
             Receiving
           </legend>
           <Input label="Name" value={receiverName} onChange={setReceiverName} />
@@ -129,13 +129,13 @@ export function WalkInPanel({
           <div className="grid grid-cols-2 gap-3">
             <Input label="City" value={receiverCity} onChange={setReceiverCity} />
             <label className="flex flex-col gap-1">
-              <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-ink-3">
+              <span className="text-[13px] font-semibold text-ink-3">
                 Destination
               </span>
               <select
                 value={lane}
                 onChange={(event) => setLane(event.target.value)}
-                className="h-[52px] border border-ink bg-white px-3 text-[15px]"
+                className="h-12 rounded-[10px] border border-rule bg-panel-2 px-4 text-[15px]"
               >
                 {(reference?.lanes ?? []).map((l) => (
                   <option key={l.code} value={l.code}>
@@ -149,13 +149,13 @@ export function WalkInPanel({
       </div>
 
       <div className="px-4 pb-4 sm:px-5 sm:pb-5">
-        <span className="text-xs font-bold uppercase tracking-[0.1em] text-ink-3">
+        <span className="text-[13px] font-semibold text-ink-3">
           Boxes, measured now
         </span>
 
         <div className="mt-3 flex flex-col gap-3">
           {boxes.map((box, index) => (
-            <div key={box.id} className="flex flex-wrap items-end gap-3 bg-panel-2 p-3">
+            <div key={box.id} className="flex flex-wrap items-end gap-3 rounded-[12px] border border-rule bg-panel-2 p-4">
               <span className="tnum w-10 shrink-0 text-[13px] font-bold">#{index + 1}</span>
               {(
                 [
@@ -166,7 +166,7 @@ export function WalkInPanel({
                 ] as const
               ).map(([key, label]) => (
                 <label key={key} className="flex flex-1 flex-col gap-1" style={{ minWidth: 66 }}>
-                  <span className="text-center text-[10px] font-bold uppercase text-ink-3">
+                  <span className="text-center text-[11px] font-semibold text-ink-3">
                     {label}
                   </span>
                   <input
@@ -178,7 +178,7 @@ export function WalkInPanel({
                       )
                     }
                     aria-label={`Box ${index + 1} ${label}`}
-                    className="tnum h-[52px] border border-ink bg-white text-center text-[18px] font-bold"
+                    className="tnum h-12 rounded-[10px] border border-rule bg-panel text-center text-[17px] font-bold"
                   />
                 </label>
               ))}
@@ -186,7 +186,7 @@ export function WalkInPanel({
                 <button
                   type="button"
                   onClick={() => setBoxes(boxes.filter((b) => b.id !== box.id))}
-                  className="h-[52px] px-3 text-[11px] font-bold uppercase text-alert-ink"
+                  className="h-12 px-3 text-[13px] font-bold text-alert-ink"
                 >
                   Remove
                 </button>
@@ -198,13 +198,13 @@ export function WalkInPanel({
         <button
           type="button"
           onClick={() => setBoxes([...boxes, blankBox()])}
-          className="mt-3 h-11 border-2 border-dashed border-rule px-5 text-[11px] font-bold uppercase tracking-[0.1em] text-ink-2"
+          className="mt-3 h-11 rounded-[10px] border-2 border-dashed border-rule px-5 text-[13px] font-bold text-ink-2"
         >
           + Another box
         </button>
 
         {error && (
-          <p className="mt-3 border-l-4 border-alert bg-alert-tint px-4 py-3 text-[14px] font-medium text-alert-ink">
+          <p className="mt-3 rounded-[12px] bg-alert-tint px-5 py-4 text-[14px] leading-[1.55] text-alert-ink">
             {error}
           </p>
         )}
@@ -213,7 +213,7 @@ export function WalkInPanel({
           type="button"
           disabled={!ready || busy}
           onClick={submit}
-          className="mt-4 h-[60px] w-full bg-ink text-sm font-bold uppercase tracking-[0.14em] text-ink-invert disabled:opacity-35"
+          className="mt-5 h-14 w-full rounded-[12px] bg-brand text-[15px] font-bold text-ink-invert disabled:opacity-40"
         >
           {busy ? 'Taking in…' : 'Take in and print labels'}
         </button>
@@ -235,11 +235,11 @@ function Input({
 }) {
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-[11px] font-bold uppercase tracking-[0.06em] text-ink-3">{label}</span>
+      <span className="text-[13px] font-semibold text-ink-3">{label}</span>
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className={`h-[52px] border border-ink bg-white px-3 text-[15px] ${tabular ? 'tnum' : ''}`}
+        className={`h-12 rounded-[10px] border border-rule bg-panel-2 px-4 text-[15px] ${tabular ? 'tnum' : ''}`}
       />
     </label>
   );

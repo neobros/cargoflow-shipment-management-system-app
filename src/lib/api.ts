@@ -45,11 +45,8 @@ export interface Reference {
   surcharges: {
     handlingPerPiece: string;
     customsClearance: string;
-    originPickup: string;
-    remoteDelivery: string;
     oversizePiece: string;
   };
-  cover: { percent: string; minimum: string };
   taxPercent: string;
 }
 
@@ -65,10 +62,6 @@ export interface QuoteRequest {
   lane: string;
   service: ServiceMode;
   pieces: PieceInput[];
-  declaredValue?: number;
-  coverRequested?: boolean;
-  pickupRequested?: boolean;
-  remoteDelivery?: boolean;
 }
 
 export interface QuoteLine {

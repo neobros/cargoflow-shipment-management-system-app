@@ -5,7 +5,7 @@ const links = [
   { to: '/', label: 'Get a price', primary: true },
   { to: '/track', label: 'Track a box', primary: false },
   { to: '/admin', label: 'Admin panel', primary: false },
-  { to: '/depot', label: 'Depot floor', primary: false },
+  { to: '/admin/depot', label: 'Depot floor', primary: false },
 ];
 
 export function NotFoundPage() {

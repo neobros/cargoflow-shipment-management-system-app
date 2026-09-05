@@ -19,9 +19,6 @@ export interface CreateBookingRequest {
   lane: string;
   service: ServiceMode;
   pieces: PieceInput[];
-  declaredValue?: number;
-  coverRequested?: boolean;
-  pickupRequested?: boolean;
   sender: PartyInput;
   receiver: PartyInput;
 }
@@ -122,7 +119,38 @@ export interface Label {
   printedAt: string;
 }
 
+export interface DepotOverview {
+  counts: {
+    awaitingReceipt: number;
+    awaitingMeasure: number;
+    held: number;
+    readyToLabel: number;
+    loadedToday: number;
+  };
+  openContainers: {
+    containerNumber: string;
+    destination: string;
+    vessel: string;
+    voyage: string;
+    fillPercent: number;
+    pieceCount: number;
+    cutOffAt: string;
+    hoursToCutOff: number;
+  }[];
+  heldPieces: {
+    trackingId: string;
+    bookingRef: string;
+    consignee: string;
+    declaredVolume: string;
+    verifiedVolume: string;
+  }[];
+  recentEvents: { at: string; pieceId: string; code: string; actor: string; detail: string }[];
+}
+
 export const depot = {
+  /** The warehouse dashboard. */
+  overview: () => request<DepotOverview>('/v1/depot/overview'),
+
   queue: () => request<{ entries: QueueEntry[] }>('/v1/depot/queue'),
 
   piece: (trackingId: string) =>
@@ -289,15 +317,26 @@ export interface Invoice {
 }
 
 export interface NotificationRow {
+  entityId: string;
   event: string;
   channel: 'email' | 'sms';
   to: string;
   subject: string;
   body: string;
   bookingRef: string;
-  status: string;
+  status: 'pending' | 'sent' | 'failed' | 'suppressed';
+  attempts: number;
+  /** Which transport carried it — `log:email`, `smtp`, `twilio`. */
+  transport: string | null;
+  error: string | null;
   createdAt: string;
   sentAt: string | null;
+}
+
+export interface QueueHealth {
+  pending: number;
+  failed: number;
+  sentToday: number;
 }
 
 export const documents = {
@@ -307,8 +346,11 @@ export const documents = {
     post<{ invoice: Invoice }>(`/v1/bookings/${encodeURIComponent(reference)}/invoice`),
   markPaid: (number: string) =>
     post<{ invoice: Invoice }>(`/v1/invoices/${encodeURIComponent(number)}/paid`),
+  retryNotification: (entityId: string, event: string) =>
+    post<{ requeued: number }>('/v1/notifications/retry', { entityId, event }),
+
   notifications: (bookingRef?: string) =>
-    request<{ notifications: NotificationRow[] }>(
+    request<{ health: QueueHealth; notifications: NotificationRow[] }>(
       bookingRef ? `/v1/notifications?bookingRef=${encodeURIComponent(bookingRef)}` : '/v1/notifications',
     ),
 };

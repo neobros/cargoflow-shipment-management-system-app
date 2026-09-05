@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { NoAccess } from '@/components/admin/NoAccess';
 import { useAsync } from '@/hooks/useAsync';
 import { useAuth } from '@/hooks/useAuth';
-import { admin, type Exception } from '@/lib/admin';
+import { admin, can, type Exception } from '@/lib/admin';
 
 const toneClasses: Record<Exception['tone'], { chip: string; dot: string; text: string }> = {
   alert: { chip: 'bg-alert-tint', dot: 'bg-alert', text: 'text-alert-ink' },
@@ -19,11 +19,18 @@ export function OverviewPage() {
       <NoAccess
         user={user}
         message={`${error.message}. The overview is for supervisors and above.`}
-        alternatives={[
-          { label: 'Bookings', to: '/admin/bookings' },
-          { label: 'Price changes', to: '/admin/billing' },
-          { label: 'Depot floor', to: '/depot' },
-        ]}
+        alternatives={
+          can(user, 'depot:receive')
+            ? [
+                { label: 'Go to the depot floor', to: '/admin/depot' },
+                { label: 'Bookings', to: '/admin/bookings' },
+                { label: 'Price changes', to: '/admin/billing' },
+              ]
+            : [
+                { label: 'Bookings', to: '/admin/bookings' },
+                { label: 'Price changes', to: '/admin/billing' },
+              ]
+        }
       />
     );
   }
@@ -125,7 +132,7 @@ export function OverviewPage() {
                   return (
                     <div
                       key={item.id}
-                      className="grid min-w-[720px] grid-cols-[110px_150px_minmax(0,1fr)_80px_110px] items-center gap-[14px] border-b border-rule-2 px-[22px] py-[15px] last:border-b-0"
+                      className="grid min-w-[820px] grid-cols-[110px_150px_minmax(240px,1fr)_80px_110px] items-center gap-[14px] border-b border-rule-2 px-[22px] py-[15px] last:border-b-0"
                     >
                       <span
                         className={`inline-flex w-fit items-center gap-[7px] rounded-[7px] px-[10px] py-[5px] ${tone.chip}`}
@@ -155,7 +162,8 @@ export function OverviewPage() {
             </div>
 
             <p className="text-[13px] text-ink-4">
-              Live from the database. Warehouse, containers, rate cards and customers are still to build.
+              Live from the database. Anything the system settled by itself — a measurement within
+              tolerance, a reminder already sent — never reaches this queue.
             </p>
           </>
         )}

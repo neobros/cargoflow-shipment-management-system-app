@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BolSheet } from '@/components/admin/BolSheet';
+import { OpenContainer } from '@/components/admin/OpenContainer';
 import { useAuth } from '@/hooks/useAuth';
 import { can } from '@/lib/admin';
 import {
@@ -115,6 +116,8 @@ export function ContainersPage() {
       return `${built.number} ready.`;
     });
 
+  const mayOpen = user && can(user, 'containers:manage');
+  const mayPrintBol = user && can(user, 'documents:read');
   const mayLoad = user && can(user, 'containers:load');
   const maySeal = user && can(user, 'containers:seal');
 
@@ -131,6 +134,26 @@ export function ContainersPage() {
         )}
         {notice && (
           <p className="rounded-[12px] bg-ok-tint px-5 py-4 text-[14px] text-ok-ink">{notice}</p>
+        )}
+
+        {mayOpen && (
+          <OpenContainer
+            onOpened={(message) => {
+              setNotice(message);
+              void refresh();
+            }}
+          />
+        )}
+
+        {list.length === 0 && (
+          <div className="rounded-[14px] border border-rule bg-panel px-6 py-14 text-center">
+            <p className="text-[16px] font-semibold">No containers on the board</p>
+            <p className="mx-auto mt-2 max-w-[46ch] text-[15px] leading-[1.6] text-ink-3">
+              {mayOpen
+                ? 'Open one above and checked boxes can be loaded into it.'
+                : 'A supervisor opens the next one. Checked boxes wait on the floor until then.'}
+            </p>
+          </div>
         )}
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -192,14 +215,16 @@ export function ContainersPage() {
                   {detail.container.sealNumber ? ` · seal ${detail.container.sealNumber}` : ''}
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={openBol}
-                disabled={busy || detail.pieces.length === 0}
-                className="h-10 rounded-[10px] bg-panel-2 px-4 text-[13px] font-bold text-ink-2 disabled:opacity-40"
-              >
-                Master Bill of Lading
-              </button>
+              {mayPrintBol && (
+                <button
+                  type="button"
+                  onClick={openBol}
+                  disabled={busy || detail.pieces.length === 0}
+                  className="h-10 rounded-[10px] bg-panel-2 px-4 text-[13px] font-bold text-ink-2 disabled:opacity-40"
+                >
+                  Master Bill of Lading
+                </button>
+              )}
             </div>
 
             {detail.container.status === 'open' && mayLoad && (
@@ -278,7 +303,9 @@ export function ContainersPage() {
           </section>
         )}
 
-        {bol && <BolSheet bol={bol} onClose={() => setBol(null)} />}
+        {bol && selected && (
+          <BolSheet bol={bol} containerNumber={selected} onClose={() => setBol(null)} />
+        )}
       </div>
     </>
   );

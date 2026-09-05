@@ -1,5 +1,6 @@
 import { Link, Outlet } from 'react-router-dom';
 import { Wordmark } from '@/components/Logo';
+import { useCustomer } from '@/hooks/useCustomer';
 
 const LINKS = [
   { label: 'Send a shipment', to: '/book', hash: false },
@@ -9,6 +10,8 @@ const LINKS = [
 ];
 
 export function CustomerLayout() {
+  const { account } = useCustomer();
+
   return (
     <div data-surface="customer" className="min-h-screen bg-bg text-ink">
       <header className="border-b border-rule-2">
@@ -32,12 +35,27 @@ export function CustomerLayout() {
             </nav>
           </div>
 
-          <Link
-            to="/book"
-            className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand px-5 text-[14px] font-bold text-ink-invert md:h-12 md:px-6 md:text-[15px]"
-          >
-            Send a box
-          </Link>
+          <div className="flex shrink-0 items-center gap-2 md:gap-3">
+            {account ? (
+              <Link
+                to="/account"
+                className="hidden max-w-[160px] truncate text-[14px] font-semibold text-ink-2 sm:block"
+                title={account.email}
+              >
+                {account.name.split(' ')[0]}'s shipping
+              </Link>
+            ) : (
+              <Link to="/sign-in" className="text-[14px] font-semibold text-ink-2">
+                Sign in
+              </Link>
+            )}
+            <Link
+              to="/book"
+              className="inline-flex h-11 shrink-0 items-center whitespace-nowrap rounded-full bg-brand px-5 text-[14px] font-bold text-ink-invert md:h-12 md:px-6 md:text-[15px]"
+            >
+              Send a box
+            </Link>
+          </div>
         </div>
 
         {/* Below md the links move to their own row rather than disappearing. */}
@@ -88,6 +106,9 @@ export function CustomerLayout() {
               <Link to="/track" className="text-[15px] text-ink-3">
                 Track a box
               </Link>
+              <Link to="/account" className="text-[15px] text-ink-3">
+                Your shipping
+              </Link>
               <a href="/#prices" className="text-[15px] text-ink-3">
                 What it costs
               </a>
@@ -99,17 +120,9 @@ export function CustomerLayout() {
               <Link to="/admin" className="text-[15px] text-ink-3">
                 Admin panel
               </Link>
-              {/* Leaves the customer site for a different surface entirely, so
-                  it takes a tab of its own rather than replacing the page. */}
-              <a
-                href="/depot"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[15px] text-ink-3"
-              >
+              <Link to="/admin/depot" className="text-[15px] text-ink-3">
                 Depot floor
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

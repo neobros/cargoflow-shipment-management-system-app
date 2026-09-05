@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { landingFor } from '@/lib/admin';
 import { ApiError } from '@/lib/http';
 
 export function LoginForm({
-  redirectTo = '/admin',
+  redirectTo,
   defaultEmail = 'billing@cargoflow.test',
 }: {
   redirectTo?: string;
@@ -23,8 +24,10 @@ export function LoginForm({
     setError(null);
 
     try {
-      await signIn(email, password);
-      navigate(redirectTo, { replace: true });
+      const signedIn = await signIn(email, password);
+      // An explicit redirect (the depot's own sign-in) wins; otherwise go where
+      // this role can actually work rather than to a fixed page.
+      navigate(redirectTo ?? landingFor(signedIn), { replace: true });
     } catch (e) {
       setError(
         e instanceof ApiError && e.code === 'network_unreachable'

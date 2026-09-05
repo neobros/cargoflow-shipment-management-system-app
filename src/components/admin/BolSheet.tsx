@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { downloadFile } from '@/lib/download';
 import type { Bol } from '@/lib/depot';
 
 const day = (iso: string) =>
@@ -13,10 +15,37 @@ const day = (iso: string) =>
  * read it at the port are looking for those in those positions, not for
  * whatever arrangement we found prettier.
  *
- * Printed through the browser onto A4. A PDF library would produce the same
- * page with a build step and a font-embedding problem attached.
+ * Printed through the browser onto A4, or downloaded as a PDF the server draws
+ * with pdfkit — a print dialog is not a file, and the carrier needs one they
+ * can attach to an email.
  */
-export function BolSheet({ bol, onClose }: { bol: Bol; onClose: () => void }) {
+export function BolSheet({
+  bol,
+  onClose,
+  containerNumber,
+}: {
+  bol: Bol;
+  onClose: () => void;
+  containerNumber: string;
+}) {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const save = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await downloadFile(
+        `/v1/containers/${encodeURIComponent(containerNumber)}/bol.pdf`,
+        `${bol.number}.pdf`,
+      );
+    } catch (caught) {
+      setError((caught as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -42,6 +71,14 @@ export function BolSheet({ bol, onClose }: { bol: Bol; onClose: () => void }) {
             </button>
             <button
               type="button"
+              onClick={save}
+              disabled={saving}
+              className="h-10 rounded-[10px] bg-panel-2 px-4 text-[13px] font-bold text-ink-2 disabled:opacity-40"
+            >
+              {saving ? 'Making it…' : 'Download PDF'}
+            </button>
+            <button
+              type="button"
               onClick={() => window.print()}
               className="h-10 rounded-[10px] bg-brand px-5 text-[13px] font-bold text-ink-invert"
             >
@@ -49,6 +86,12 @@ export function BolSheet({ bol, onClose }: { bol: Bol; onClose: () => void }) {
             </button>
           </div>
         </div>
+
+        {error && (
+          <p className="cf-no-print mx-5 mt-4 rounded-[12px] bg-alert-tint px-5 py-4 text-[14px] text-alert-ink">
+            {error}
+          </p>
+        )}
 
         <article className="bg-white p-6 text-black sm:p-8" style={{ fontVariantNumeric: 'tabular-nums' }}>
           <header className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-black pb-4">

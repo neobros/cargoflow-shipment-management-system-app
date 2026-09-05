@@ -1,35 +1,39 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { LogoutButton } from '@/components/admin/LogoutButton';
+import { NavIcon, type NavIconName } from '@/components/admin/NavIcon';
 import { LogoTile } from '@/components/Logo';
 import { useAuth } from '@/hooks/useAuth';
 import { can } from '@/lib/admin';
 
-const NAV = [
+const NAV: {
+  group: string;
+  items: {
+    label: string;
+    to: string;
+    icon: NavIconName;
+    permission: string;
+    built: boolean;
+    end: boolean;
+  }[];
+}[] = [
   {
     group: 'RUN THE DAY',
     items: [
-      { label: 'Overview', to: '/admin', permission: 'admin:access', built: true, end: true },
-      { label: 'Bookings', to: '/admin/bookings', permission: 'bookings:read', built: true, end: false },
-      {
-        label: 'Depot floor',
-        to: '/depot',
-        permission: 'depot:receive',
-        built: true,
-        end: false,
-        newTab: true,
-      },
-      { label: 'Containers', to: '/admin/containers', permission: 'containers:read', built: true, end: false },
+      { label: 'Overview', to: '/admin', icon: 'overview', permission: 'admin:access', built: true, end: true },
+      { label: 'Bookings', to: '/admin/bookings', icon: 'bookings', permission: 'bookings:read', built: true, end: false },
+      { label: 'Depot floor', to: '/admin/depot', icon: 'depot', permission: 'depot:receive', built: true, end: false },
+      { label: 'Containers', to: '/admin/containers', icon: 'containers', permission: 'containers:read', built: true, end: false },
     ],
   },
   {
     group: 'MONEY',
     items: [
-      { label: 'Billing', to: '/admin/billing', permission: 'adjustments:read', built: true, end: false },
-      { label: 'Invoices', to: '/admin/invoices', permission: 'invoices:issue', built: true, end: false },
-      { label: 'Messages', to: '/admin/messages', permission: 'adjustments:read', built: true, end: false },
-      { label: 'Rate cards', to: '/admin/rates', permission: 'rates:read', built: false, end: false },
-      { label: 'Customers', to: '/admin/customers', permission: 'bookings:read', built: false, end: false },
+      { label: 'Billing', to: '/admin/billing', icon: 'billing', permission: 'adjustments:read', built: true, end: false },
+      { label: 'Invoices', to: '/admin/invoices', icon: 'invoices', permission: 'invoices:issue', built: true, end: false },
+      { label: 'Messages', to: '/admin/messages', icon: 'messages', permission: 'adjustments:read', built: true, end: false },
+      { label: 'Rate cards', to: '/admin/rates', icon: 'rates', permission: 'rates:read', built: true, end: false },
+      { label: 'Customers', to: '/admin/customers', icon: 'customers', permission: 'customers:read', built: true, end: false },
     ],
   },
 ];
@@ -127,42 +131,9 @@ export function DashboardLayout() {
                   active ? 'bg-brand-tint font-bold text-brand' : 'font-medium text-ink-2'
                 }`;
 
-                if (item.built && 'newTab' in item && item.newTab) {
-                  // A plain anchor, not a Link: this leaves the admin router
-                  // altogether. The icon is there so the new tab is expected
-                  // rather than a surprise.
-                  return (
-                    <a
-                      key={item.to}
-                      href={item.to}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={className}
-                    >
-                      {item.label}
-                      <svg
-                        width="13"
-                        height="13"
-                        viewBox="0 0 14 14"
-                        fill="none"
-                        aria-hidden="true"
-                        className="ml-auto shrink-0 opacity-55"
-                      >
-                        <path
-                          d="M5.5 2.5H2.5v9h9v-3M8.5 2.5h3v3M11.5 2.5 6.5 7.5"
-                          stroke="currentColor"
-                          strokeWidth="1.4"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span className="sr-only">(opens in a new tab)</span>
-                    </a>
-                  );
-                }
-
                 return item.built ? (
                   <Link key={item.to} to={item.to} className={className}>
+                    <NavIcon name={item.icon} />
                     {item.label}
                   </Link>
                 ) : (
@@ -173,6 +144,8 @@ export function DashboardLayout() {
                     title="Not built yet"
                     className="mb-[3px] flex h-[42px] cursor-not-allowed items-center gap-3 rounded-[10px] px-3 text-sm font-medium text-ink-4"
                   >
+                    {/* Dimmed with the label, so a disabled row reads as one thing. */}
+                    <NavIcon name={item.icon} className="opacity-60" />
                     {item.label}
                   </span>
                 );
@@ -184,13 +157,16 @@ export function DashboardLayout() {
         <span className="flex-grow" />
 
         <div className="flex flex-col gap-2 rounded-xl bg-panel-2 p-3">
+          {/* The boundary should be legible here, not discovered by being
+              refused three screens later. */}
+          <p className="text-[11px] leading-[1.45] text-ink-4">{user.roleScope}</p>
           <div className="flex items-center gap-[11px]">
             <span className="flex h-[34px] w-[34px] items-center justify-center rounded-full bg-brand text-[13px] font-bold text-white">
               {initials}
             </span>
             <div className="flex min-w-0 flex-col gap-[3px]">
               <span className="truncate text-[13px] font-semibold leading-none">{user.name}</span>
-              <span className="text-[11px] font-medium leading-none text-ink-4">{user.roleLabel}</span>
+              <span className="text-[11px] font-medium leading-none text-brand">{user.roleLabel}</span>
             </div>
           </div>
           <LogoutButton />

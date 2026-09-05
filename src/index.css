@@ -176,49 +176,6 @@
   --deep: #060910;
 }
 
-/* ── Surface 03 · Depot floor ─────────────────────────────────────────────
-   A hundred times a shift, in gloves, under bad light, on a cheap handheld.
-   Square corners and no shadows to lose in glare. Deliberately austere. */
-[data-surface='depot'] {
-  --bg: #f5f1e8;
-  --panel: #fffdf8;
-  --panel-2: #efe9dc;
-
-  --ink: #17150f;
-  --ink-2: #3d382d;
-  --ink-3: #6e6656;
-  --ink-4: #8e8370;
-  --ink-invert: #f5f1e8;
-
-  --rule: #ded7c7;
-  --rule-2: #ede8dc;
-
-  --brand: #e0921b;
-  --brand-deep: #b87113;
-  --brand-tint: #fbeed6;
-  --brand-soft: #f3dfb4;
-
-  --alert: #b4402a;
-  --alert-tint: #f6e2dc;
-  --alert-ink: #8c3521;
-
-  --ok: #4e7b45;
-  --ok-tint: #e4ede0;
-  --ok-ink: #3b6033;
-
-  --warn: #e0921b;
-  --warn-tint: #fbeed6;
-  --warn-ink: #8a5a0e;
-
-  --accent: #2c6e8a;
-  --accent-tint: #deeaef;
-
-  --deep: #17150f;
-
-  --radius-card: 2px;
-  --radius-control: 2px;
-  --control-height: 52px;
-}
 
 /* ── Base ─────────────────────────────────────────────────────────────── */
 

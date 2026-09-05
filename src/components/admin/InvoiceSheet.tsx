@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { downloadFile } from '@/lib/download';
 import type { Invoice } from '@/lib/depot';
 
 const day = (iso: string) =>
@@ -14,7 +16,31 @@ const day = (iso: string) =>
  * GST appears once, under the subtotal, and not again as a line — the quote
  * carries it both ways and only one of them belongs on a tax invoice.
  */
-export function InvoiceSheet({ invoice, onClose }: { invoice: Invoice; onClose: () => void }) {
+export function InvoiceSheet({
+  invoice,
+  onClose,
+  pdfPath,
+}: {
+  invoice: Invoice;
+  onClose: () => void;
+  /** Where to fetch the PDF — staff and customers have different routes. */
+  pdfPath?: string;
+}) {
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const save = async () => {
+    setSaving(true);
+    setError(null);
+    try {
+      await downloadFile(pdfPath ?? `/v1/invoices/${invoice.number}/pdf`, `${invoice.number}.pdf`);
+    } catch (caught) {
+      setError((caught as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -36,6 +62,14 @@ export function InvoiceSheet({ invoice, onClose }: { invoice: Invoice; onClose: 
             </button>
             <button
               type="button"
+              onClick={save}
+              disabled={saving}
+              className="h-10 rounded-[10px] bg-panel-2 px-4 text-[13px] font-bold text-ink-2 disabled:opacity-40"
+            >
+              {saving ? 'Making it…' : 'Download PDF'}
+            </button>
+            <button
+              type="button"
               onClick={() => window.print()}
               className="h-10 rounded-[10px] bg-brand px-5 text-[13px] font-bold text-ink-invert"
             >
@@ -43,6 +77,12 @@ export function InvoiceSheet({ invoice, onClose }: { invoice: Invoice; onClose: 
             </button>
           </div>
         </div>
+
+        {error && (
+          <p className="cf-no-print mx-5 mt-4 rounded-[12px] bg-alert-tint px-5 py-4 text-[14px] text-alert-ink">
+            {error}
+          </p>
+        )}
 
         <article
           className="bg-white p-6 text-black sm:p-10"

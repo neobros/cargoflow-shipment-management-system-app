@@ -33,6 +33,13 @@ type Draft = {
   weightKg: string;
 };
 
+/**
+ * The one packaging type whose size the customer sets. Every other preset is a
+ * box we supply at a known size, so its dimensions are the preset's — the
+ * calculator must price the box it names, not one the figures were edited into.
+ */
+const CUSTOM = 'custom_carton';
+
 const numeric = (value: string): number => {
   const n = Number.parseFloat(value.replace(/[^0-9.]/g, ''));
   return Number.isFinite(n) ? n : 0;
@@ -102,8 +109,6 @@ export function QuoteWidget() {
         const { quote: result } = await api.estimate({
           lane: current.lane,
           service: current.service,
-          declaredValue: 0,
-          coverRequested: false,
           pieces: [
             {
               packaging: current.packaging?.kind ?? 'custom_carton',
@@ -139,10 +144,16 @@ export function QuoteWidget() {
   const choosePackaging = (preset: PackagingPreset) =>
     update({
       packaging: preset,
-      lengthCm: String(mmToCm(preset.lengthMm)),
-      widthCm: String(mmToCm(preset.widthMm)),
-      heightCm: String(mmToCm(preset.heightMm)),
-      weightKg: String(preset.weightGrams / 1000),
+      // A supplied box brings its own size. A custom carton keeps whatever is
+      // on screen, so switching to it is an unlock rather than a reset.
+      ...(preset.kind === CUSTOM
+        ? {}
+        : {
+            lengthCm: String(mmToCm(preset.lengthMm)),
+            widthCm: String(mmToCm(preset.widthMm)),
+            heightCm: String(mmToCm(preset.heightMm)),
+          }),
+      weightKg: draft?.weightKg || String(preset.weightGrams / 1000),
     });
 
   const lane = useMemo(
@@ -156,14 +167,8 @@ export function QuoteWidget() {
 
   return (
     <div className="overflow-hidden rounded-[24px] border border-rule bg-panel shadow-[0_2px_4px_rgba(11,31,29,.04),0_18px_44px_rgba(11,31,29,.09)]">
-      <div className="flex items-center justify-between gap-3 bg-panel-2 px-5 py-[22px] sm:px-[26px]">
+      <div className="bg-panel-2 px-5 py-[22px] sm:px-[26px]">
         <span className="font-display text-[17px] font-bold tracking-[-0.01em]">What will it cost?</span>
-        <span
-          className="rounded-full bg-panel px-[13px] py-[7px] text-xs font-bold text-ink-3"
-          aria-live="polite"
-        >
-          {pricing ? 'Working it out…' : '20 seconds'}
-        </span>
       </div>
 
       <div className="flex flex-col gap-5 p-5 sm:p-[26px]">
@@ -229,7 +234,9 @@ export function QuoteWidget() {
           >
             {(reference?.packaging ?? []).map((p) => (
               <option key={p.kind} value={p.kind}>
-                {p.name} — {mmToCm(p.lengthMm)}×{mmToCm(p.widthMm)}×{mmToCm(p.heightMm)} cm
+                {p.kind === CUSTOM
+                  ? `${p.name} — you enter the measurements`
+                  : `${p.name} — ${mmToCm(p.lengthMm)}×${mmToCm(p.widthMm)}×${mmToCm(p.heightMm)} cm`}
               </option>
             ))}
             {!reference ? <option>Loading…</option> : null}
@@ -247,6 +254,7 @@ export function QuoteWidget() {
             ] as const
           ).map(([label, key]) => {
             const isWeight = key === 'weightKg';
+            const locked = !isWeight && draft?.packaging?.kind !== CUSTOM;
             return (
               <label key={key} className="flex flex-col gap-2">
                 <span
@@ -258,16 +266,28 @@ export function QuoteWidget() {
                   inputMode="decimal"
                   value={draft?.[key] ?? ''}
                   onChange={(e) => update({ [key]: e.target.value } as Partial<Draft>)}
+                  readOnly={locked}
+                  tabIndex={locked ? -1 : undefined}
                   aria-label={isWeight ? 'Weight in kilograms' : `${label} in centimetres`}
+                  aria-readonly={locked || undefined}
                   className={`tnum h-[56px] rounded-[14px] text-center text-[19px] font-bold ${
-                    isWeight ? 'border-2 border-brand bg-brand-tint text-brand-deep' : 'bg-panel-2 text-ink'
+                    isWeight
+                      ? 'border-2 border-brand bg-brand-tint text-brand-deep'
+                      : locked
+                        ? 'cursor-not-allowed bg-panel-2 text-ink-3'
+                        : 'bg-panel-2 text-ink ring-2 ring-brand ring-inset'
                   }`}
                 />
               </label>
             );
           })}
         </div>
-        <p className="-mt-2 text-center text-xs text-ink-4">Centimetres and kilograms. Rough is fine.</p>
+        <p className="-mt-2 text-center text-xs leading-[1.5] text-ink-4">
+          {draft?.packaging?.kind === CUSTOM
+            ? 'Your own carton — enter the size in centimetres.'
+            : 'This box has a fixed size. Pick “Your own carton” above to enter your own.'}{' '}
+          Weight in kilograms; rough is fine.
+        </p>
 
         {/* Price */}
         <div className="flex flex-col gap-[13px] rounded-[18px] bg-panel-2 p-5">
@@ -294,17 +314,33 @@ export function QuoteWidget() {
               </div>
             </>
           ) : (
-            <p className="text-[14px] leading-[1.55] text-ink-3">
-              Fill in the four numbers above and the price appears here.
+            <p className="text-[14px] leading-[1.55] text-ink-3" aria-live="polite">
+              {pricing
+                ? 'Working it out…'
+                : 'Fill in the four numbers above and the price appears here.'}
             </p>
           )}
         </div>
 
         <Link
-          to="/track"
+          to="/book"
+          state={
+            draft && quote
+              ? {
+                  from: 'quote',
+                  lane: draft.lane,
+                  service: draft.service,
+                  packaging: draft.packaging?.kind ?? 'medium_box',
+                  lengthCm: draft.lengthCm,
+                  widthCm: draft.widthCm,
+                  heightCm: draft.heightCm,
+                  weightKg: draft.weightKg,
+                }
+              : undefined
+          }
           className="flex h-[60px] items-center justify-center gap-3 rounded-[16px] bg-brand text-[17px] font-bold text-ink-invert"
         >
-          Track a shipment
+          Book this shipment
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
             <path
               d="M3 9h12m-5-5 5 5-5 5"

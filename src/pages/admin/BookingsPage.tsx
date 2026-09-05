@@ -2,6 +2,20 @@ import { Link } from 'react-router-dom';
 import { useAsync } from '@/hooks/useAsync';
 import { admin } from '@/lib/admin';
 
+/** Header and rows share one definition, so they cannot drift apart. */
+const BOOKING_COLUMNS =
+  'grid min-w-[1080px] grid-cols-[150px_minmax(200px,1fr)_170px_70px_150px_110px_110px] gap-3 px-5';
+
+const BOOKING_HEADS = [
+  { label: 'Reference', align: 'left' },
+  { label: 'Customer', align: 'left' },
+  { label: 'Lane', align: 'left' },
+  { label: 'Pcs', align: 'center' },
+  { label: 'Status', align: 'left' },
+  { label: 'Booked', align: 'right' },
+  { label: 'Now', align: 'right' },
+] as const;
+
 const statusChip: Record<string, string> = {
   booked: 'bg-panel-2 text-ink-2',
   received: 'bg-panel-2 text-ink-2',
@@ -47,10 +61,15 @@ export function BookingsPage() {
 
         {data && (
           <div className="overflow-x-auto rounded-[14px] border border-rule bg-panel">
-            <div className="grid min-w-[900px] grid-cols-[150px_minmax(0,1fr)_170px_70px_150px_110px_110px] gap-3 border-b border-rule bg-panel-2 px-5 py-3">
-              {['Reference', 'Customer', 'Lane', 'Pcs', 'Status', 'Booked', 'Now'].map((head) => (
-                <span key={head} className="text-[11px] font-bold text-ink-3">
-                  {head}
+            <div className={`${BOOKING_COLUMNS} border-b border-rule bg-panel-2 py-3`}>
+              {BOOKING_HEADS.map(({ label, align }) => (
+                <span
+                  key={label}
+                  className={`text-[11px] font-bold text-ink-3 ${
+                    align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : ''
+                  }`}
+                >
+                  {label}
                 </span>
               ))}
             </div>
@@ -63,7 +82,7 @@ export function BookingsPage() {
               bookings.map((booking) => (
                 <div
                   key={booking.reference}
-                  className="grid min-w-[900px] grid-cols-[150px_minmax(0,1fr)_170px_70px_150px_110px_110px] items-center gap-3 border-b border-rule-2 px-5 py-4 last:border-b-0"
+                  className={`${BOOKING_COLUMNS} items-center border-b border-rule-2 py-4 last:border-b-0`}
                 >
                   <Link to={`/track?id=${booking.reference}`} className="tnum text-[13px] font-semibold">
                     {booking.reference}
