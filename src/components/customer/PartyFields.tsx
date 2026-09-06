@@ -50,6 +50,7 @@ export function PartyFields({
   onChange,
   problems,
   askForId = false,
+  lockedCountry,
 }: {
   title: string;
   subtitle: string;
@@ -57,6 +58,12 @@ export function PartyFields({
   onChange: (party: PartyDraft) => void;
   problems: string[];
   askForId?: boolean;
+  /**
+   * The lane decides this side's country, so show it rather than ask for it.
+   * The same reasoning as the packaging presets locking their dimensions: a
+   * field the customer cannot get right is a field they should not be given.
+   */
+  lockedCountry?: string;
 }) {
   const set = (patch: Partial<PartyDraft>) => onChange({ ...value, ...patch });
   const wrong = (field: string) => problems.includes(field) && Boolean(fieldValue(value, field));
@@ -131,17 +138,23 @@ export function PartyFields({
         />
         <label className="flex flex-col gap-2">
           <span className="text-[13px] font-bold text-ink-3">Country</span>
-          <select
-            value={value.country}
-            onChange={(e) => set({ country: e.target.value })}
-            className="h-[52px] rounded-[14px] bg-panel-2 px-4 text-[16px] font-medium"
-          >
-            {COUNTRIES.map(([code, name]) => (
-              <option key={code} value={code}>
-                {name}
-              </option>
-            ))}
-          </select>
+          {lockedCountry ? (
+            <div className="flex h-[52px] items-center rounded-[14px] bg-panel-2 px-4 text-[16px] font-medium text-ink-3">
+              {COUNTRIES.find(([code]) => code === lockedCountry)?.[1] ?? lockedCountry}
+            </div>
+          ) : (
+            <select
+              value={value.country}
+              onChange={(e) => set({ country: e.target.value })}
+              className="h-[52px] rounded-[14px] bg-panel-2 px-4 text-[16px] font-medium"
+            >
+              {COUNTRIES.map(([code, name]) => (
+                <option key={code} value={code}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          )}
         </label>
 
         {askForId && (
