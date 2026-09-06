@@ -79,6 +79,22 @@ export function BookPage() {
     };
   }, []);
 
+  const chosenLane = reference?.lanes.find((l) => l.code === lane);
+
+  /*
+   * The lane owns both countries, so the drafts follow it.
+   *
+   * Locking the field in the form only hides the choice — the value still has
+   * to move, or changing the lane after the addresses are typed posts the old
+   * country and the server refuses the booking.
+   */
+  useEffect(() => {
+    if (!chosenLane) return;
+    const { fromCountry, toCountry } = chosenLane;
+    setSender((party) => (party.country === fromCountry ? party : { ...party, country: fromCountry }));
+    setReceiver((party) => (party.country === toCountry ? party : { ...party, country: toCountry }));
+  }, [chosenLane?.code, chosenLane?.fromCountry, chosenLane?.toCountry]);
+
   const readyPieces = useMemo(
     () => pieces.map(toPieceInput).filter((piece): piece is NonNullable<typeof piece> => piece !== null),
     [pieces],
@@ -239,14 +255,16 @@ export function BookPage() {
                 value={sender}
                 onChange={setSender}
                 problems={senderProblems}
+                lockedCountry={chosenLane?.fromCountry}
                 askForId
               />
               <PartyFields
                 title="Who is receiving"
-                subtitle="The address in Australia. Customs needs a real street address — a PO box will not clear."
+                subtitle={`The address in ${chosenLane?.to ?? 'Australia'}. Customs needs a real street address — a PO box will not clear.`}
                 value={receiver}
                 onChange={setReceiver}
                 problems={receiverProblems}
+                lockedCountry={chosenLane?.toCountry}
               />
             </>
           )}

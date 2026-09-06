@@ -33,7 +33,10 @@ export interface LaneService {
 export interface Lane {
   code: string;
   from: string;
+  /** The lane's countries decide which addresses it can carry. */
+  fromCountry: string;
   to: string;
+  toCountry: string;
   services: LaneService[];
 }
 
